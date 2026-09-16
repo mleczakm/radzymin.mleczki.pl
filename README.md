@@ -1,0 +1,142 @@
+# radzymin.mleczki.pl — Petycje
+
+Serwis do bezpiecznego zbierania podpisów pod petycjami mieszkańców Radzymina.
+PHP + [Swoole](https://www.swoole.co.uk/) (współprogramy/coroutines), uruchamiany
+jako pojedynczy mikroserwis HTTP — bez frameworka, wzorowany na
+[logging-poc (poc-microservice)](https://github.com/mleczakm/logging-poc/tree/poc-microservice),
+ale z bieżącą wersją `ext-swoole`.
+
+## Zanim wdrożysz na produkcję
+
+1. **Podmień treść petycji** w [config/petitions.php](config/petitions.php) — obecnie jest tam
+   wyłącznie przykładowy wpis.
+2. **Uzupełnij dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
+   (imię i nazwisko / nazwa organizatora, adres, e-mail kontaktowy) lub przez zmienne
+   `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
+3. Skonfiguruj konto `radzymin.mleczki@gmail.com` (hasło aplikacji Google, nie hasło do konta)
+   i ustaw `MAILER_DSN`.
+4. Wygeneruj `APP_SECRET` i hash hasła administratora (`bin/hash-password`).
+
+## Architektura
+
+- **Serwer**: `Swoole\Http\Server` w trybie `SWOOLE_BASE`, workery HTTP + workery zadań
+  (`task_worker_num`) — wysyłka e-maili potwierdzających idzie przez task workera, żeby
+  wolne SMTP nie blokowało obsługi requestów.
+- **Baza danych**: SQLite (plik) przez PDO. Jedna tabela `signatures` z unikalnym
+  indeksem `(petition_slug, email)` — uniemożliwia podwójny podpis tym samym e-mailem pod
+  tą samą petycją. Połączenie PDO tworzone jest leniwie, dopiero w `onWorkerStart` (po forku
+  procesu workera), bo uchwytów SQLite nie wolno dzielić między procesami.
+- **Limiter żądań**: `Swoole\Table` w pamięci współdzielonej — liczniki per IP widoczne dla
+  wszystkich workerów bez blokad.
+- **Szablony**: proste pliki PHP (`templates/`), bez silnika szablonów — wyjście zawsze
+  przez `e()` (`htmlspecialchars`).
+- **Poczta**: `symfony/mailer`, transport SMTP wskazany przez `MAILER_DSN`
+  (w produkcji: Gmail + hasło aplikacji).
+
+### Przepływ podpisu petycji
+
+1. `GET /petycja/{slug}` — formularz z ukrytym polem-pułapką (honeypot) i podpisanym
+   znacznikiem czasu.
+2. `POST /petycja/{slug}/podpisz` — walidacja + zabezpieczenia przed botami (patrz niżej),
+   zapis rekordu `pending` w SQLite, zlecenie wysyłki e-maila do task workera.
+3. Osoba klika link w e-mailu → `GET /potwierdz/{token}` → status zmienia się na `confirmed`
+   (dopiero wtedy podpis liczy się do wyniku publicznego).
+
+### Podstawowa ochrona przed botami
+
+- **Honeypot** — ukryte polem CSS (`.hp-field`), niewidoczne dla ludzi; wypełnione pole =
+  odrzucenie (po cichu, bez informowania bota).
+- **Znacznik czasu formularza** — podpisany HMAC-em znacznik generowany przy renderze
+  formularza; odrzucane jest wypełnienie szybsze niż 3 sekundy lub starsze niż 6 godzin.
+- **Rate limiting per IP** — maks. 5 prób na godzinę (`Swoole\Table`).
+- **Podwójne potwierdzenie e-mailem** — podpis liczy się dopiero po kliknięciu w link,
+  więc atakujący musiałby kontrolować realne skrzynki e-mail.
+
+To celowo *podstawowa* ochrona (bez zewnętrznych captchy typu reCAPTCHA/hCaptcha) — nie
+wymaga zewnętrznych usług i nie zbiera dodatkowych danych o odwiedzających.
+
+## Panel administracyjny
+
+Dostępny pod `/admin`, chroniony HTTP Basic Auth (jedno konto, `ADMIN_USER` +
+`ADMIN_PASSWORD_HASH`). Świadomie bez systemu logowania z sesjami — jeden administrator,
+więc Basic Auth przez HTTPS jest wystarczający i dużo prostszy.
+
+```bash
+bin/hash-password "twoje-haslo"
+# wynik wklej jako ADMIN_PASSWORD_HASH
+```
+
+Panel pozwala:
+
+- zobaczyć liczbę podpisów potwierdzonych/oczekujących per petycja,
+- pobrać eksport CSV podpisów potwierdzonych (`/admin/petycje/{slug}/eksport.csv`),
+- dopisać podpisy zebrane na papierze (`/admin/petycje/{slug}/papier`) — wklejenie listy
+  `Imię Nazwisko;Miejscowość` (jedna osoba na wiersz) od razu zapisuje je jako potwierdzone
+  (`source = paper`), więc licznik na stronie łączy podpisy online i papierowe.
+
+## Lista do zbierania podpisów papierowo
+
+`GET /petycja/{slug}/lista.pdf` generuje (przez [dompdf](https://github.com/dompdf/dompdf))
+gotowy do druku arkusz A4: tytuł petycji, krótka klauzula RODO i tabela
+`Lp. / Imię i nazwisko / Miejscowość / Podpis`. Po zebraniu podpisów przepisz je do panelu
+administracyjnego (patrz wyżej), żeby doliczyć je do wyniku.
+
+## Rozwój lokalny
+
+```bash
+cp .env.example .env
+docker compose up
+```
+
+- Aplikacja: http://localhost:8080
+- Mailpit (podgląd wysłanych e-maili zamiast prawdziwego Gmaila): http://localhost:8025
+
+Bez Dockera (wymaga lokalnie zainstalowanego `ext-swoole`):
+
+```bash
+composer install
+php bin/server
+```
+
+## Testy
+
+```bash
+composer install
+composer run-script lint   # php -l dla wszystkich plików
+composer test               # PHPUnit
+```
+
+## Wdrożenie
+
+Tag (`git tag vX.Y.Z && git push --tags`) uruchamia
+[`.github/workflows/production-build-and-deploy.yml`](.github/workflows/production-build-and-deploy.yml):
+build obrazu → `ghcr.io/mleczakm/radzymin.mleczki.pl` → deployment przez Ansible na serwer
+Mikrus, tym samym mechanizmem co [cargo.mleczki.pl](https://github.com/mleczakm/cargo.mleczki.pl)
+(rola `app_deploy`, Cloudflare DNS, Cytrus).
+
+### Wymagane sekrety repozytorium (Settings → Secrets and variables → Actions)
+
+| Sekret | Opis |
+|---|---|
+| `SSH_PRIVATE_KEY` | klucz SSH do serwera Mikrus |
+| `MIKRUS_SSH_HOST`, `MIKRUS_SSH_PORT`, `MIKRUS_IPV6` | dane dostępowe do serwera |
+| `CYTRUS_IPV4`, `CYTRUS_API_TOKEN` | Mikrus Cytrus (proxy domenowe) |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID` | zarządzanie rekordem DNS domeny |
+| `DOTENV` | zawartość pliku `.env` z sekretami aplikacji (patrz niżej) |
+
+Zawartość sekretu `DOTENV` (jeden `KLUCZ=wartość` na linię):
+
+```
+APP_SECRET=...            # php -r "echo bin2hex(random_bytes(32));"
+MAILER_DSN=smtp://radzymin.mleczki%40gmail.com:HASLO_APLIKACJI@smtp.gmail.com:587
+ADMIN_USER=admin
+ADMIN_PASSWORD_HASH=...   # bin/hash-password "..."
+ORGANIZER_NAME=...
+ORGANIZER_ADDRESS=...
+ORGANIZER_EMAIL=radzymin.mleczki@gmail.com
+```
+
+Domena, port kontenera i zmienne niesekretne (np. `DB_PATH`) są ustawione w
+[ansible/playbooks/config.yml](ansible/playbooks/config.yml) — port `8081` domyślnie
+(inny niż `8080` używany przez cargo.mleczki.pl na tym samym serwerze); zweryfikuj, że jest
+wolny na docelowym serwerze przed pierwszym wdrożeniem.

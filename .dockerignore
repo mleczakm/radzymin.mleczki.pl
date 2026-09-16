@@ -1,0 +1,9 @@
+.git
+.github
+.idea
+var
+vendor
+.env
+.env.*
+tests
+*.md

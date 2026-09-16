@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+      target: dev
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      MAILER_DSN: smtp://mailpit:1025
+    volumes:
+      - .:/app
+      - composer-cache:/tmp/composer-cache
+    depends_on:
+      - mailpit
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  composer-cache:

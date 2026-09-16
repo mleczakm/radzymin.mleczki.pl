@@ -1,0 +1,67 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Action\Admin\DashboardAction;
+use App\Action\Admin\ExportCsvAction;
+use App\Action\Admin\PaperSignatureFormAction;
+use App\Action\Admin\PaperSignatureStoreAction;
+use App\Action\ConfirmAction;
+use App\Action\HealthAction;
+use App\Action\HomeAction;
+use App\Action\PetitionPdfAction;
+use App\Action\PetitionShowAction;
+use App\Action\PetitionSignAction;
+use App\Action\PrivacyAction;
+use App\Http\Router;
+use App\Runtime\WorkerServices;
+use App\Security\RateLimiter;
+use App\Security\SignatureFormValidator;
+use App\Server\Factory;
+use App\Task\Handler as TaskHandler;
+use App\View\Renderer;
+
+require __DIR__ . '/../config/bootstrap.php';
+
+$environment = env('APP_ENV', 'prod');
+$server = Factory::create($environment);
+
+// Shared-memory table must be created before the server forks its workers.
+$rateLimitTable = RateLimiter::createTable();
+
+$services = new WorkerServices($rateLimitTable);
+$view = new Renderer(dirname(__DIR__) . '/templates');
+$validator = new SignatureFormValidator();
+
+$server->on('WorkerStart', function () use ($services): void {
+    $services->boot();
+});
+
+$router = new Router();
+$router->get('/', new HomeAction($services, $view));
+$router->get('/zdrowie', new HealthAction());
+$router->get('/polityka-prywatnosci', new PrivacyAction($view));
+$router->get('/petycja/{slug}', new PetitionShowAction($services, $view));
+$router->post('/petycja/{slug}/podpisz', new PetitionSignAction($server, $services, $view, $validator));
+$router->get('/petycja/{slug}/lista.pdf', new PetitionPdfAction($services, $view));
+$router->get('/potwierdz/{token}', new ConfirmAction($services, $view));
+
+$router->get('/admin', new DashboardAction($services, $view));
+$router->get('/admin/petycje/{slug}/eksport.csv', new ExportCsvAction($services));
+$router->get('/admin/petycje/{slug}/papier', new PaperSignatureFormAction($services, $view));
+$router->post('/admin/petycje/{slug}/papier', new PaperSignatureStoreAction($services, $view));
+
+$server->on('Request', function ($request, $response) use ($router): void {
+    $router->dispatch($request, $response);
+});
+
+$taskHandler = new TaskHandler($services);
+$server->on('Task', function ($server, $task) use ($taskHandler): void {
+    $taskHandler->handle($server, $task);
+});
+$server->on('Finish', function (): void {
+    // No-op: task results aren't consumed by the HTTP worker.
+});
+
+$server->start();

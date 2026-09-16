@@ -1,0 +1,17 @@
+---
+# Petycje Radzymin deployment configuration
+apps:
+  - name: radzymin-petycje
+    domain: "{{ domain | default('radzymin.mleczki.pl') }}"
+    port: 8081
+    image: ghcr.io/mleczakm/radzymin.mleczki.pl:{{ app_version | default('latest') }}
+    env:
+      APP_ENV: prod
+      APP_VERSION: "{{ app_version | default('latest') }}"
+      DB_PATH: /app/db/data.sqlite
+      BASE_URL: "https://{{ domain | default('radzymin.mleczki.pl') }}"
+      MAIL_FROM: radzymin.mleczki@gmail.com
+    healthcheck_enabled: true
+    ipv6: "{{ mikrus_ipv6 }}"
+    cytrus_host: "{{ cytrus_host }}"
+    proxied: true

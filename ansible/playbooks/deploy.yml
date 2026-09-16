@@ -1,0 +1,13 @@
+---
+- name: Deploy Petycje Radzymin
+  hosts: mikrus
+  become: yes
+  vars_files:
+    - config.yml
+  tasks:
+    - name: Deploy app
+      include_role:
+        name: app_deploy
+      loop: "{{ apps }}"
+      loop_control:
+        loop_var: app

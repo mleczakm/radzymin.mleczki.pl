@@ -1,0 +1,11 @@
+/vendor/
+/var/
+.env
+.env.local
+.env.production
+.idea/
+.DS_Store
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.phpunit.result.cache
