@@ -10,8 +10,12 @@ services:
       - .env
     environment:
       MAILER_DSN: smtp://mailpit:1025
+      DB_PATH: /app/db/data.sqlite
     volumes:
       - .:/app
+      # SQLite lives in its own named volume, not the bind mount above: SQLite writes can
+      # fail with "disk I/O error" over some hosts' FUSE/virtiofs-backed bind mounts.
+      - db-data:/app/db
       - composer-cache:/tmp/composer-cache
     depends_on:
       - mailpit
@@ -24,3 +28,4 @@ services:
 
 volumes:
   composer-cache:
+  db-data:
