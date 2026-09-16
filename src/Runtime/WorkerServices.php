@@ -46,7 +46,7 @@ final class WorkerServices
         $appSecret = env('APP_SECRET') ?? throw new \RuntimeException('APP_SECRET is not configured.');
 
         $this->pdo = Database::connect(env('DB_PATH', dirname(__DIR__, 2) . '/var/data.sqlite'));
-        $this->petitions = new PetitionRepository(dirname(__DIR__, 2) . '/config/petitions.php');
+        $this->petitions = new PetitionRepository(dirname(__DIR__, 2) . '/content/petitions');
         $this->signatures = new SignatureRepository($this->pdo);
         $this->logger = \App\Log\Factory::create(filter_var(env('APP_DEBUG', '0'), FILTER_VALIDATE_BOOLEAN));
         $this->timingToken = new FormTimingToken($appSecret);

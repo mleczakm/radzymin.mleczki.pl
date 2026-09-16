@@ -14,16 +14,4 @@ final class Petition
         public readonly string $createdAt,
     ) {
     }
-
-    /** @param array{slug: string, title: string, lead: string, body: string, createdAt: string} $data */
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            slug: $data['slug'],
-            title: $data['title'],
-            lead: $data['lead'],
-            bodyHtml: $data['body'],
-            createdAt: $data['createdAt'],
-        );
-    }
 }

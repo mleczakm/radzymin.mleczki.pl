@@ -8,14 +8,37 @@ ale z bieżącą wersją `ext-swoole`.
 
 ## Zanim wdrożysz na produkcję
 
-1. **Podmień treść petycji** w [config/petitions.php](config/petitions.php) — obecnie jest tam
-   wyłącznie przykładowy wpis.
+1. **Podmień treść petycji** — dodaj/edytuj pliki w
+   [content/petitions/](content/petitions/) (jeden plik Markdown na petycję, format opisany
+   niżej). Obecnie jest tam wyłącznie przykładowy wpis.
 2. **Uzupełnij dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
    (imię i nazwisko / nazwa organizatora, adres, e-mail kontaktowy) lub przez zmienne
    `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
 3. Skonfiguruj konto `radzymin.mleczki@gmail.com` (hasło aplikacji Google, nie hasło do konta)
    i ustaw `MAILER_DSN`.
 4. Wygeneruj `APP_SECRET` i hash hasła administratora (`bin/hash-password`).
+
+## Treść petycji
+
+Każda petycja to jeden plik Markdown w [content/petitions/](content/petitions/), np.
+`content/petitions/sciezka-rowerowa.md`:
+
+```markdown
+---
+slug: sciezka-rowerowa
+title: "Petycja o budowę ścieżki rowerowej przy ul. Przykładowej"
+lead: >
+  Jedno-dwuzdaniowy lead widoczny na liście petycji i w nagłówku strony.
+createdAt: 2026-09-16
+---
+
+Pełna treść petycji w **Markdown** — akapity, listy, pogrubienia itd.
+```
+
+`slug`, `title` i `lead` są wymagane; `createdAt` jest opcjonalne (domyślnie data modyfikacji
+pliku). Plik parsowany jest raz na proces workera (przy starcie), a wynikowy HTML trzymany w
+pamięci przez cały czas życia workera — dodanie kolejnej petycji nie kosztuje nic przy obsłudze
+requestów, tylko przy starcie serwera.
 
 ## Architektura
 
