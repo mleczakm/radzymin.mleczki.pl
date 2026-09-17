@@ -30,13 +30,21 @@ title: "Petycja o budowę ścieżki rowerowej przy ul. Przykładowej"
 lead: >
   Jedno-dwuzdaniowy lead widoczny na liście petycji i w nagłówku strony.
 createdAt: 2026-09-16
+goal: 500
+deadline: 2026-12-31
 ---
 
 Pełna treść petycji w **Markdown** — akapity, listy, pogrubienia itd.
 ```
 
-`slug`, `title` i `lead` są wymagane; `createdAt` jest opcjonalne (domyślnie data modyfikacji
-pliku). Plik parsowany jest raz na proces workera (przy starcie), a wynikowy HTML trzymany w
+`slug`, `title` i `lead` są wymagane. Opcjonalne pola:
+
+- `createdAt` — domyślnie data modyfikacji pliku.
+- `goal` — liczba podpisów jako cel; gdy ustawiona, na stronie petycji i po potwierdzeniu
+  e-maila pojawia się pasek postępu (`X z celu Y podpisów`, `Z%`, „Brakuje jeszcze N…”).
+- `deadline` — data (RRRR-MM-DD); razem z `goal` pokazuje też „pozostało N dni”.
+
+Plik parsowany jest raz na proces workera (przy starcie), a wynikowy HTML trzymany w
 pamięci przez cały czas życia workera — dodanie kolejnej petycji nie kosztuje nic przy obsłudze
 requestów, tylko przy starcie serwera.
 

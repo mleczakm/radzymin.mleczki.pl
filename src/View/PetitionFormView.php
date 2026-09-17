@@ -23,9 +23,23 @@ final class PetitionFormView
         array $old = [],
         ?string $notice = null,
     ): string {
+        $confirmedCount = $services->signatures->countConfirmed($petition->slug);
+
+        $progressHtml = $view->render('_progress', [
+            'petition' => $petition,
+            'confirmedCount' => $confirmedCount,
+            'percent' => $petition->progressPercent($confirmedCount),
+            'daysRemaining' => $petition->daysRemaining(),
+        ]);
+
+        $recentSignaturesHtml = $view->render('_recent_signatures', [
+            'recentSignatures' => $services->signatures->recentConfirmed($petition->slug),
+        ]);
+
         return $view->renderPage('petition', [
             'petition' => $petition,
-            'confirmedCount' => $services->signatures->countConfirmed($petition->slug),
+            'progressHtml' => $progressHtml,
+            'recentSignaturesHtml' => $recentSignaturesHtml,
             'errors' => $errors,
             'old' => $old,
             'notice' => $notice,

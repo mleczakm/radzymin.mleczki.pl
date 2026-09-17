@@ -10,6 +10,7 @@
   --color-error-bg: #fbe9e7;
   --color-success: #146c43;
   --color-success-bg: #e6f4ea;
+  --color-accent: #b3261e;
   --radius: 10px;
 }
 
@@ -127,6 +128,81 @@ a { color: var(--color-primary-dark); }
 
 code { background: #eee; padding: 2px 5px; border-radius: 4px; }
 
+/* Confirmation page (after clicking the e-mail link) */
+.confirmed-page {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 36px 28px;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.confirmed-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.confirmed-page h1 { font-size: 1.5rem; }
+.confirmed-lead { color: var(--color-text); }
+.confirmed-note { color: var(--color-muted); font-size: 0.9rem; }
+
+/* Signature-goal progress bar, shared by the petition page and the confirmation page */
+.progress-block { margin-top: 24px; text-align: left; }
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.progress-stat-right { text-align: right; }
+
+.progress-stat-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+}
+
+.progress-stat-right .progress-stat-value { color: var(--color-accent); }
+
+.progress-stat-label { display: block; font-size: 0.85rem; color: var(--color-muted); }
+
+.progress-bar {
+  height: 10px;
+  background: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar-fill { height: 100%; background: var(--color-primary); border-radius: 999px; }
+
+.progress-remaining { margin-top: 12px; font-size: 0.9rem; color: var(--color-muted); }
+.confirmed-page .progress-remaining { text-align: center; }
+
+.recent-signatures { margin-top: 28px; text-align: left; }
+.recent-signatures h3 { font-size: 1rem; margin-bottom: 8px; }
+.recent-signatures-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.recent-signatures-list li {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}
+.recent-signatures-city { color: var(--color-muted); }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg: #14161a;
@@ -136,6 +212,7 @@ code { background: #eee; padding: 2px 5px; border-radius: 4px; }
     --color-border: #2f333a;
     --color-error-bg: #3a1f1d;
     --color-success-bg: #17321f;
+    --color-accent: #e5847c;
   }
   a { color: #6fd08c; }
   .site-footer a { color: var(--color-muted); }

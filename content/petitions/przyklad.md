@@ -5,6 +5,8 @@ lead: >
   To jest przykładowa petycja służąca do testów wdrożenia.
   Przed uruchomieniem serwisu podmień ten wpis na prawdziwą treść.
 createdAt: 2026-09-16
+goal: 500
+deadline: 2026-12-31
 ---
 
 Miejsce na pełną treść petycji w formacie **Markdown** — możesz używać akapitów,

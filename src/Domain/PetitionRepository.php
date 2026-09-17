@@ -50,23 +50,28 @@ final class PetitionRepository
             }
         }
 
+        $goal = $frontMatter['goal'] ?? null;
+
         return new Petition(
             slug: (string) $frontMatter['slug'],
             title: (string) $frontMatter['title'],
             lead: (string) $frontMatter['lead'],
             bodyHtml: (string) $markdown->convert(trim($matches[2]))->getContent(),
-            createdAt: self::normalizeCreatedAt($frontMatter['createdAt'] ?? null, $file),
+            createdAt: self::normalizeDate($frontMatter['createdAt'] ?? null)
+                ?? date('Y-m-d', filemtime($file) ?: time()),
+            goal: is_numeric($goal) ? (int) $goal : null,
+            deadline: self::normalizeDate($frontMatter['deadline'] ?? null),
         );
     }
 
     /** YAML parses an unquoted "2026-01-15" as a Unix timestamp (int), not a string — normalize either form. */
-    private static function normalizeCreatedAt(mixed $createdAt, string $file): string
+    private static function normalizeDate(mixed $date): ?string
     {
         return match (true) {
-            $createdAt instanceof \DateTimeInterface => $createdAt->format('Y-m-d'),
-            is_numeric($createdAt) => date('Y-m-d', (int) $createdAt),
-            is_string($createdAt) && $createdAt !== '' => $createdAt,
-            default => date('Y-m-d', filemtime($file) ?: time()),
+            $date instanceof \DateTimeInterface => $date->format('Y-m-d'),
+            is_numeric($date) => date('Y-m-d', (int) $date),
+            is_string($date) && $date !== '' => $date,
+            default => null,
         };
     }
 

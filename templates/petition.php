@@ -5,9 +5,11 @@
 
 <div class="petition-body"><?= $petition->bodyHtml ?></div>
 
-<p class="signature-count"><strong><?= (int) $confirmedCount ?></strong> potwierdzonych podpisów</p>
+<?= $progressHtml ?>
 
 <p><a href="/petycja/<?= e($petition->slug) ?>/lista.pdf">Pobierz pustą listę do zbierania podpisów papierowo (PDF)</a></p>
+
+<?= $recentSignaturesHtml ?>
 
 <h2>Podpisz petycję</h2>
 

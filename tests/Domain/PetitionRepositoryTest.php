@@ -19,6 +19,8 @@ final class PetitionRepositoryTest extends TestCase
         self::assertSame('Testowa petycja', $petition->title);
         self::assertSame('Krótki opis testowej petycji.', $petition->lead);
         self::assertSame('2026-01-15', $petition->createdAt);
+        self::assertSame(100, $petition->goal);
+        self::assertSame('2026-01-25', $petition->deadline);
         self::assertStringContainsString('<li>Punkt A</li>', $petition->bodyHtml);
         self::assertStringContainsString('<p>Akapit treści.</p>', $petition->bodyHtml);
     }

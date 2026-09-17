@@ -43,4 +43,12 @@ final class Signature
     {
         return trim($this->firstName . ' ' . $this->lastName);
     }
+
+    /** First name + last-initial for public display, e.g. "Jan K." — never the full surname. */
+    public function publicDisplayName(): string
+    {
+        $initial = mb_substr(trim($this->lastName), 0, 1);
+
+        return trim(trim($this->firstName) . ($initial !== '' ? ' ' . $initial . '.' : ''));
+    }
 }

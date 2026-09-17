@@ -139,6 +139,29 @@ final class SignatureRepository
         );
     }
 
+    /**
+     * Most recently confirmed signatures for the public "Niedawno podpisali" list — newest first.
+     *
+     * @return list<Signature>
+     */
+    public function recentConfirmed(string $petitionSlug, int $limit = 8): array
+    {
+        // id DESC as a tiebreaker: confirmed_at has only second precision, so signatures
+        // confirmed within the same second (e.g. a batch paper import) would tie otherwise.
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM signatures WHERE petition_slug = :slug AND status = 'confirmed'
+                ORDER BY confirmed_at DESC, id DESC LIMIT :limit"
+        );
+        $stmt->bindValue(':slug', $petitionSlug);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(
+            Signature::fromRow(...),
+            $stmt->fetchAll(PDO::FETCH_ASSOC),
+        );
+    }
+
     public function countPending(string $petitionSlug): int
     {
         $stmt = $this->pdo->prepare(

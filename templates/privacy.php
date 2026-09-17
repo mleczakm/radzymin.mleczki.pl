@@ -21,6 +21,11 @@ osoby podpisującej (art. 6 ust. 1 lit. a RODO).</p>
 podmiotom technicznie obsługującym serwis (hosting, dostawca poczty e-mail używany wyłącznie
 do wysyłki linku potwierdzającego).</p>
 
+<h2>Publiczna lista „Niedawno podpisali”</h2>
+<p>Po potwierdzeniu podpisu Twoje <strong>imię i pierwsza litera nazwiska</strong> (np. „Jan K.”)
+oraz <strong>miejscowość</strong> mogą pojawić się publicznie na stronie petycji, na liście osób,
+które ją niedawno podpisały. Pełne nazwisko i adres e-mail nigdy nie są tam publikowane.</p>
+
 <h2>Okres przechowywania</h2>
 <p>Dane przechowywane są przez czas trwania zbiórki podpisów oraz procedowania petycji przez jej
 adresata, a następnie usuwane lub anonimizowane, chyba że dłuższe przechowywanie wynika z przepisów prawa.</p>

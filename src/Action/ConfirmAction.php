@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Action;
 
+use App\Domain\Petition;
 use App\Domain\SignatureStatus;
 use App\Http\Responder;
 use App\Runtime\WorkerServices;
@@ -36,11 +37,7 @@ final class ConfirmAction
         $petition = $this->services->petitions->find($signature->petitionSlug);
 
         if ($signature->status === SignatureStatus::Confirmed) {
-            Responder::html($response, $this->view->renderPage('confirmed', [
-                'petition' => $petition,
-                'alreadyConfirmed' => true,
-                'confirmedCount' => $petition !== null ? $this->services->signatures->countConfirmed($petition->slug) : null,
-            ]));
+            Responder::html($response, $this->renderConfirmed($petition, alreadyConfirmed: true));
 
             return;
         }
@@ -58,10 +55,26 @@ final class ConfirmAction
 
         $this->services->signatures->confirm($signature);
 
-        Responder::html($response, $this->view->renderPage('confirmed', [
+        Responder::html($response, $this->renderConfirmed($petition, alreadyConfirmed: false));
+    }
+
+    private function renderConfirmed(?Petition $petition, bool $alreadyConfirmed): string
+    {
+        $confirmedCount = $petition !== null ? $this->services->signatures->countConfirmed($petition->slug) : null;
+
+        $progressHtml = $petition !== null && $confirmedCount !== null
+            ? $this->view->render('_progress', [
+                'petition' => $petition,
+                'confirmedCount' => $confirmedCount,
+                'percent' => $petition->progressPercent($confirmedCount),
+                'daysRemaining' => $petition->daysRemaining(),
+            ])
+            : '';
+
+        return $this->view->renderPage('confirmed', [
             'petition' => $petition,
-            'alreadyConfirmed' => false,
-            'confirmedCount' => $petition !== null ? $this->services->signatures->countConfirmed($petition->slug) : null,
-        ]));
+            'alreadyConfirmed' => $alreadyConfirmed,
+            'progressHtml' => $progressHtml,
+        ]);
     }
 }

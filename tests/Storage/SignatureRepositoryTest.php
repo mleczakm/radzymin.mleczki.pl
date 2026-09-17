@@ -82,4 +82,35 @@ final class SignatureRepositoryTest extends TestCase
     {
         self::assertNull($this->repository->findByToken('does-not-exist'));
     }
+
+    public function testRecentConfirmedReturnsNewestFirst(): void
+    {
+        $this->repository->createPaper('przyklad', 'Anna', 'Nowak', 'Ciemne');
+        $this->repository->createPaper('przyklad', 'Jan', 'Kowalski', 'Radzymin');
+
+        $recent = $this->repository->recentConfirmed('przyklad');
+
+        self::assertSame(['Jan', 'Anna'], array_map(static fn ($s) => $s->firstName, $recent));
+    }
+
+    public function testRecentConfirmedExcludesPendingAndOtherPetitions(): void
+    {
+        $this->repository->createOnline('przyklad', 'Pending', 'Osoba', 'Radzymin', 'pending@example.com', 'iphash');
+        $this->repository->createPaper('inna-petycja', 'Inna', 'Osoba', 'Radzymin');
+        $this->repository->createPaper('przyklad', 'Widoczna', 'Osoba', 'Radzymin');
+
+        $recent = $this->repository->recentConfirmed('przyklad');
+
+        self::assertCount(1, $recent);
+        self::assertSame('Widoczna', $recent[0]->firstName);
+    }
+
+    public function testRecentConfirmedRespectsLimit(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->repository->createPaper('przyklad', "Osoba$i", 'Testowa', 'Radzymin');
+        }
+
+        self::assertCount(3, $this->repository->recentConfirmed('przyklad', limit: 3));
+    }
 }
