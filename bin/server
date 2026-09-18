@@ -17,6 +17,7 @@ use App\Action\PrivacyAction;
 use App\Action\TopicShowAction;
 use App\Http\Router;
 use App\Runtime\WorkerServices;
+use App\Security\ProductionGuard;
 use App\Security\RateLimiter;
 use App\Security\SignatureFormValidator;
 use App\Server\Factory;
@@ -26,6 +27,8 @@ use App\View\Renderer;
 require __DIR__ . '/../config/bootstrap.php';
 
 $environment = env('APP_ENV', 'prod');
+ProductionGuard::assertSafe($environment, env('APP_SECRET', ''), env('ADMIN_PASSWORD_HASH', ''));
+
 $server = Factory::create($environment);
 
 // Shared-memory table must be created before the server forks its workers.

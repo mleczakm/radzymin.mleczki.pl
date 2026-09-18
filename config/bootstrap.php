@@ -16,6 +16,10 @@ if (is_file(dirname(__DIR__) . '/.env') && !getenv('APP_ENV')) {
         [$key, $value] = explode('=', $line, 2);
         $key = trim($key);
         $value = trim($value);
+        // Same convention as docker compose: matching surrounding quotes are not part of the value.
+        if (strlen($value) >= 2 && $value[0] === $value[-1] && ($value[0] === "'" || $value[0] === '"')) {
+            $value = substr($value, 1, -1);
+        }
         if ($key !== '' && getenv($key) === false) {
             putenv("$key=$value");
             $_SERVER[$key] = $value;

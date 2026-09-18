@@ -160,9 +160,16 @@ administracyjnego (patrz wyżej), żeby doliczyć je do wyniku.
 ## Rozwój lokalny
 
 ```bash
-cp .env.example .env
 docker compose up
 ```
+
+Plik [.env](.env) jest w repozytorium celowo — zawiera **wyłącznie jawne wartości deweloperskie**
+(repozytorium jest publiczne), więc nie trzeba niczego kopiować ani generować. Logowanie do
+panelu admina lokalnie: `admin` / `admin`. Serwer w trybie innym niż `APP_ENV=dev` odmówi
+startu z `APP_SECRET` zaczynającym się od `dev-insecure-` lub z hasłem admina `admin`, więc
+przypadkowe wklejenie tego pliku do sekretu `DOTENV` nie skończy się produkcją z publicznymi
+danymi. Hash hasła w `.env` jest w pojedynczych cudzysłowach, bo inaczej `docker compose`
+zinterpoluje znaki `$` i go zepsuje — zachowaj je, jeśli będziesz go zmieniać.
 
 - Aplikacja: http://localhost:8080
 - Mailpit (podgląd wysłanych e-maili zamiast prawdziwego Gmaila): http://localhost:8025
@@ -198,7 +205,7 @@ Mikrus, tym samym mechanizmem co [cargo.mleczki.pl](https://github.com/mleczakm/
 | `MIKRUS_SSH_HOST`, `MIKRUS_SSH_PORT`, `MIKRUS_IPV6` | dane dostępowe do serwera |
 | `CYTRUS_IPV4`, `CYTRUS_API_TOKEN` | Mikrus Cytrus (proxy domenowe) |
 | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID` | zarządzanie rekordem DNS domeny |
-| `DOTENV` | zawartość pliku `.env` z sekretami aplikacji (patrz niżej) |
+| `DOTENV` | zawartość pliku ze **sekretami produkcyjnymi** (patrz niżej; to nie jest commitowany `.env` z wartościami deweloperskimi) |
 
 Zawartość sekretu `DOTENV` (jeden `KLUCZ=wartość` na linię):
 

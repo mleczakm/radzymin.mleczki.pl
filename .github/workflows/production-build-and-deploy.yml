@@ -74,8 +74,12 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Create .env file
+        # The secret goes through an env var, not inline in the script: a bcrypt ADMIN_PASSWORD_HASH
+        # contains "$" characters that bash would otherwise expand and silently corrupt.
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
         run: |
-          echo "${{ secrets.DOTENV }}" > .env.production
+          printf '%s\n' "$DOTENV" > .env.production
           echo "ENV_FILE_PATH=$(pwd)/.env.production" >> $GITHUB_ENV
 
       - name: Deploy to Mikrus
