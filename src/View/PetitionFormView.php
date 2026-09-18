@@ -45,6 +45,6 @@ final class PetitionFormView
             'notice' => $notice,
             'timingToken' => $services->timingToken->generate(),
             'honeypotField' => Honeypot::FIELD_NAME,
-        ], $petition->title);
+        ], $petition->title, $petition->lead);
     }
 }

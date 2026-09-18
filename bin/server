@@ -35,7 +35,11 @@ $server = Factory::create($environment);
 $rateLimitTable = RateLimiter::createTable();
 
 $services = new WorkerServices($rateLimitTable);
-$view = new Renderer(dirname(__DIR__) . '/templates');
+// Available in every template: organizer contact details (public, tiny) and the site's base URL.
+$view = new Renderer(dirname(__DIR__) . '/templates', [
+    'organizer' => require dirname(__DIR__) . '/config/organizer.php',
+    'baseUrl' => rtrim(env('BASE_URL', 'https://radzymin.mleczki.pl'), '/'),
+]);
 $validator = new SignatureFormValidator();
 
 $server->on('WorkerStart', function () use ($services): void {

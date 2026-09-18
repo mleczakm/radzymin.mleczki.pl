@@ -12,12 +12,35 @@ ale z bieżącą wersją `ext-swoole`.
    [content/petitions/](content/petitions/) (jeden plik Markdown na petycję, format opisany
    niżej). Obecnie jest tam wyłącznie przykładowy wpis.
    To samo dotyczy przykładowej sprawy w [content/topics/](content/topics/).
+   Podmień też tekst „o mnie” w [content/about.md](content/about.md) (sekcja kontaktowa na
+   stronie głównej) i — opcjonalnie — ustaw `ORGANIZER_PHONE`.
 2. **Uzupełnij dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
    (imię i nazwisko / nazwa organizatora, adres, e-mail kontaktowy) lub przez zmienne
    `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
 3. Skonfiguruj konto `radzymin.mleczki@gmail.com` (hasło aplikacji Google, nie hasło do konta)
    i ustaw `MAILER_DSN`.
 4. Wygeneruj `APP_SECRET` i hash hasła administratora (`bin/hash-password`).
+
+## Wygląd, logo i kontakt
+
+- **Logo**: [public/img/herb-gmina-radzymin.svg](public/img/herb-gmina-radzymin.svg) to
+  niezmieniony plik z <https://radzymin.pl/clients/cms_radzymin/image/default/herb-napis-pod.svg>
+  (oficjalne logo Gminy Radzymin; w środku jest rastrowy PNG, nie wektor). Favicon i
+  `apple-touch-icon.png` to wycięta z niego sama tarcza.
+- **Kolory** pochodzą z logo: niebieski `#007bc2` (marka, biały tekst na nim ma kontrast 4,55:1)
+  i żółty `#fcdf00` (wyłącznie przyciski wezwania do działania i akcenty, zawsze z ciemnym
+  tekstem). Wszystkie kolory to zmienne CSS na początku [public/style.css](public/style.css),
+  z osobnym wariantem dla trybu ciemnego. Nagłówek jest zawsze jasny, bo logo ma czarny napis
+  na przezroczystym tle.
+- **To nie jest strona urzędowa** — stopka, hero i formularz podpisu mówią to wprost, żeby nikt
+  nie oddał danych osobowych w przekonaniu, że robi to Gminie. Herb i logo należą do Gminy;
+  przed publikacją warto upewnić się, że zgadza się na takie użycie.
+- **Kontakt**: sekcja „Napisz do mnie” na stronie głównej bierze tekst z
+  [content/about.md](content/about.md) (front matter `heading`, treść w Markdown), a adres e-mail
+  i opcjonalny telefon z `config/organizer.php` (`ORGANIZER_EMAIL`, `ORGANIZER_PHONE`). Zaproszenie
+  do kontaktu jest też pod formularzem podpisu, na stronie po wysłaniu i po potwierdzeniu.
+- **Udostępnianie**: strona petycji, strona po wysłaniu formularza i strona potwierdzenia mają
+  linki WhatsApp / Facebook / e-mail. To zwykłe linki — bez JavaScriptu i skryptów zewnętrznych.
 
 ## Treść petycji
 

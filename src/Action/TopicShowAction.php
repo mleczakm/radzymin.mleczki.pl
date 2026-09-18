@@ -29,6 +29,6 @@ final class TopicShowAction
             return;
         }
 
-        Responder::html($response, $this->view->renderPage('topic', ['topic' => $topic], $topic->title));
+        Responder::html($response, $this->view->renderPage('topic', ['topic' => $topic], $topic->title, $topic->summary));
     }
 }

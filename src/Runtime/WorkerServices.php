@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Runtime;
 
+use App\Content\MarkdownLoader;
 use App\Domain\PetitionRepository;
 use App\Domain\TopicRepository;
 use App\Mail\ConfirmationMailer;
@@ -30,6 +31,8 @@ final class WorkerServices
     public readonly PDO $pdo;
     public readonly PetitionRepository $petitions;
     public readonly TopicRepository $topics;
+    /** @var array{heading: string, html: string}|null */
+    public readonly ?array $about;
     public readonly SignatureRepository $signatures;
     public readonly ConfirmationMailer $mailer;
     public readonly LoggerInterface $logger;
@@ -50,6 +53,7 @@ final class WorkerServices
         $this->pdo = Database::connect(env('DB_PATH', dirname(__DIR__, 2) . '/var/data.sqlite'));
         $this->petitions = new PetitionRepository(dirname(__DIR__, 2) . '/content/petitions');
         $this->topics = new TopicRepository(dirname(__DIR__, 2) . '/content/topics');
+        $this->about = self::loadAbout(dirname(__DIR__, 2) . '/content/about.md');
         $this->signatures = new SignatureRepository($this->pdo);
         $this->logger = \App\Log\Factory::create(filter_var(env('APP_DEBUG', '0'), FILTER_VALIDATE_BOOLEAN));
         $this->timingToken = new FormTimingToken($appSecret);
@@ -67,5 +71,20 @@ final class WorkerServices
             env('ADMIN_USER') ?? throw new \RuntimeException('ADMIN_USER is not configured.'),
             env('ADMIN_PASSWORD_HASH') ?? throw new \RuntimeException('ADMIN_PASSWORD_HASH is not configured.'),
         );
+    }
+
+    /** @return array{heading: string, html: string}|null */
+    private static function loadAbout(string $file): ?array
+    {
+        if (!is_file($file)) {
+            return null;
+        }
+
+        $document = (new MarkdownLoader())->load($file);
+
+        return [
+            'heading' => (string) ($document->frontMatter['heading'] ?? 'Napisz do mnie'),
+            'html' => $document->html,
+        ];
     }
 }

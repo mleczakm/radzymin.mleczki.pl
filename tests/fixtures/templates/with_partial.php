@@ -1,0 +1,1 @@
+[<?= $partial('greeting', ['name' => 'Partial']) ?>]

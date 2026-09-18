@@ -26,6 +26,22 @@ if (!function_exists('format_date')) {
     }
 }
 
+if (!function_exists('share_links')) {
+    /**
+     * Plain-link share targets (no JavaScript, no third-party scripts or trackers).
+     *
+     * @return array<string, string> label => URL
+     */
+    function share_links(string $url, string $text): array
+    {
+        return [
+            'WhatsApp' => 'https://wa.me/?text=' . rawurlencode($text . ' ' . $url),
+            'Facebook' => 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($url),
+            'E-mail' => 'mailto:?subject=' . rawurlencode($text) . '&body=' . rawurlencode($text . "\n\n" . $url),
+        ];
+    }
+}
+
 if (!function_exists('env')) {
     function env(string $key, ?string $default = null): ?string
     {

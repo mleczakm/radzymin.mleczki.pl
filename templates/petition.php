@@ -2,16 +2,32 @@
 
 <h1><?= e($petition->title) ?></h1>
 <p class="lead"><?= e($petition->lead) ?></p>
+<p><a class="button button-accent button-lg" href="#podpisz">Podpisz petycję</a></p>
 
 <div class="petition-body"><?= $petition->bodyHtml ?></div>
 
 <?= $progressHtml ?>
 
-<p><a href="/petycja/<?= e($petition->slug) ?>/lista.pdf">Pobierz pustą listę do zbierania podpisów papierowo (PDF)</a></p>
+<div class="help-box">
+  <h2>Pomóż zebrać podpisy</h2>
+  <?= $partial('_share', [
+      'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
+      'shareText' => 'Podpisz petycję: ' . $petition->title,
+  ]) ?>
+  <p>
+    Zbierasz podpisy wśród sąsiadów?
+    <a href="/petycja/<?= e($petition->slug) ?>/lista.pdf">Pobierz listę do druku (PDF)</a>
+    i przekaż mi wypełnioną — dopiszę podpisy do wyniku.
+  </p>
+</div>
 
 <?= $recentSignaturesHtml ?>
 
-<h2>Podpisz petycję</h2>
+<h2 id="podpisz">Podpisz petycję</h2>
+<p class="disclaimer disclaimer-inline">
+  Dane podajesz organizatorowi petycji (<a href="/polityka-prywatnosci">polityka prywatności</a>),
+  a nie Gminie Radzymin — to niezależna inicjatywa, nie strona urzędowa.
+</p>
 
 <?php if (isset($errors['_global'])): ?>
   <p class="alert alert-error"><?= e($errors['_global']) ?></p>
@@ -56,12 +72,16 @@
   <div class="field field-checkbox">
     <label>
       <input type="checkbox" name="consent" value="1" required>
-      Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, miejscowość, e-mail)
-      w celu weryfikacji i złożenia podpisu pod petycją, zgodnie z
-      <a href="/polityka-prywatnosci">polityką prywatności</a>.
+      <span>
+        Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, miejscowość, e-mail)
+        w celu weryfikacji i złożenia podpisu pod petycją, zgodnie z
+        <a href="/polityka-prywatnosci">polityką prywatności</a>.
+      </span>
     </label>
     <?php if (isset($errors['consent'])): ?><p class="field-error"><?= e($errors['consent']) ?></p><?php endif; ?>
   </div>
 
-  <button type="submit" class="button">Podpisz petycję</button>
+  <button type="submit" class="button button-accent button-lg">Podpisz petycję</button>
 </form>
+
+<?= $partial('_contact_hint', ['contactSubject' => $petition->title]) ?>

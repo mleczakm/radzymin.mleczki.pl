@@ -18,7 +18,16 @@
 
     <?= $progressHtml ?>
 
+    <div class="confirmed-share">
+      <h2>Pomóż zebrać więcej podpisów</h2>
+      <?= $partial('_share', [
+          'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
+          'shareText' => 'Podpisałem/am petycję: ' . $petition->title . '. Dołącz!',
+      ]) ?>
+    </div>
+
     <p><a href="/petycja/<?= e($petition->slug) ?>">&larr; Wróć do petycji</a></p>
+    <?= $partial('_contact_hint', ['contactSubject' => $petition->title]) ?>
   <?php else: ?>
     <p class="confirmed-lead">Twój podpis został zaliczony.</p>
     <p><a href="/">Wróć na stronę główną</a></p>

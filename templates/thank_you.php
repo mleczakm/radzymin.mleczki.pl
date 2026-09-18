@@ -4,3 +4,9 @@
 (ważny przez 48 godzin) — to zabezpieczenie przed fałszywymi podpisami.</p>
 <p>Nie widzisz wiadomości? Sprawdź folder ze spamem lub ofertami.</p>
 <p><a href="/petycja/<?= e($petition->slug) ?>">&larr; Wróć do petycji</a></p>
+
+<?= $partial('_share', [
+    'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
+    'shareText' => 'Podpisz petycję: ' . $petition->title,
+]) ?>
+<?= $partial('_contact_hint', ['contactSubject' => $petition->title]) ?>
