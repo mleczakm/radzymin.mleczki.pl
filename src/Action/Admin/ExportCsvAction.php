@@ -30,7 +30,7 @@ final class ExportCsvAction
             return;
         }
 
-        $handle = fopen('php://temp', 'r+');
+        $handle = fopen('php://temp', 'r+') ?: throw new \RuntimeException('Cannot open a temporary stream for the CSV export.');
         fwrite($handle, "\xEF\xBB\xBF"); // UTF-8 BOM so Excel shows Polish diacritics correctly.
         fputcsv($handle, ['Imię', 'Nazwisko', 'Miejscowość', 'E-mail', 'Źródło', 'Data potwierdzenia'], ';');
 
@@ -46,7 +46,7 @@ final class ExportCsvAction
         }
 
         rewind($handle);
-        $csv = stream_get_contents($handle);
+        $csv = stream_get_contents($handle) ?: '';
         fclose($handle);
 
         $response->header('Content-Type', 'text/csv; charset=utf-8');

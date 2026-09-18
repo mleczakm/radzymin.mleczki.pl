@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var string|null $contactSubject
+ */
+?>
 <?php $subject = rawurlencode('Petycje Radzymin — ' . ($contactSubject ?? 'wiadomość')); ?>
 <aside class="contact-hint">
   <p>

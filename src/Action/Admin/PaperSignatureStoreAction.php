@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Action\Admin;
 
+use App\Http\RequestInput;
 use App\Http\Responder;
 use App\Runtime\WorkerServices;
 use App\View\Renderer;
@@ -36,20 +37,20 @@ final class PaperSignatureStoreAction
             return;
         }
 
-        $raw = (string) ($request->post['lines'] ?? '');
+        $raw = RequestInput::stringFields(RequestInput::post($request))['lines'] ?? '';
         $added = 0;
         $skipped = [];
 
-        foreach (preg_split('/\r\n|\r|\n/', $raw) as $lineNumber => $line) {
+        foreach (preg_split('/\r\n|\r|\n/', $raw) ?: [] as $lineNumber => $line) {
             $line = trim($line);
             if ($line === '') {
                 continue;
             }
 
             $parts = array_map('trim', explode(';', $line, 2));
-            $fullName = $parts[0] ?? '';
+            $fullName = $parts[0];
             $city = $parts[1] ?? '';
-            $nameParts = preg_split('/\s+/', $fullName, 2);
+            $nameParts = preg_split('/\s+/', $fullName, 2) ?: [];
             $firstName = $nameParts[0] ?? '';
             $lastName = $nameParts[1] ?? '';
 

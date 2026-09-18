@@ -1,0 +1,40 @@
+php-version = "8.5"
+
+[source]
+paths = ["src", "config", "tests", "templates"]
+# Parsed for type information only (Swoole stubs, Symfony, PHPUnit, ...), not reported on.
+includes = ["vendor"]
+# Fixture templates are rendered with extracted variables and are not standalone PHP files.
+excludes = ["tests/fixtures/**"]
+
+[analyzer]
+# `mixed-assignment` flags every `$x = <mixed>`, which is exactly what reading untyped input
+# (Swoole request data, YAML front matter, Swoole\Table rows) looks like right before it is
+# narrowed with is_string()/is_array(). The rules that catch actually *using* a mixed value
+# unsafely (mixed-argument, mixed-return-statement, ...) stay on.
+ignore = ["mixed-assignment"]
+
+[linter]
+# Templates are HTML with `<?= ?>` and injected variables; PHP-file rules (strict_types, closing
+# tag, isset) don't fit there. The analyzer above does check them, including variable types.
+excludes = ["templates/**"]
+
+# --- Style opinions turned off (the code uses these idioms deliberately) -----------------------
+[linter.rules.literal-named-argument]
+enabled = false
+[linter.rules.no-shorthand-ternary]
+enabled = false    # `fopen(...) ?: throw ...` / `json_encode(...) ?: '{}'` narrow `false` returns
+[linter.rules.no-isset]
+enabled = false
+[linter.rules.braced-string-interpolation]
+enabled = false
+[linter.rules.no-else-clause]
+enabled = false
+
+# --- Design metrics that don't fit this code base ----------------------------------------------
+[linter.rules.excessive-parameter-list]
+enabled = false    # value objects (Signature, Petition, Topic) are plain constructors with many fields
+[linter.rules.too-many-methods]
+enabled = false    # one repository class per table; PHPUnit classes hold one method per case
+[linter.rules.too-many-properties]
+enabled = false    # WorkerServices is the per-worker service registry

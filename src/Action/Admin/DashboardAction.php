@@ -23,7 +23,8 @@ final class DashboardAction
         }
 
         $rows = [];
-        foreach ($this->services->petitions->all() as $slug => $petition) {
+        foreach ($this->services->petitions->all() as $petition) {
+            $slug = $petition->slug;
             $rows[] = [
                 'petition' => $petition,
                 'confirmed' => $this->services->signatures->countConfirmed($slug),

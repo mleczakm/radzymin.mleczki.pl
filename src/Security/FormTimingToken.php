@@ -16,7 +16,7 @@ final class FormTimingToken
     private const MIN_SECONDS = 3;
     private const MAX_SECONDS = 6 * 3600;
 
-    public function __construct(private readonly string $secret)
+    public function __construct(#[\SensitiveParameter] private readonly string $secret)
     {
     }
 
@@ -27,7 +27,7 @@ final class FormTimingToken
         return $timestamp . '.' . hash_hmac('sha256', $timestamp, $this->secret);
     }
 
-    public function isValid(?string $token): bool
+    public function isValid(#[\SensitiveParameter] ?string $token): bool
     {
         if ($token === null || !str_contains($token, '.')) {
             return false;

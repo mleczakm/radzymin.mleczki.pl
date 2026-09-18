@@ -1,3 +1,16 @@
+<?php
+/**
+ * @var \App\Domain\Petition $petition
+ * @var string $progressHtml
+ * @var string $recentSignaturesHtml
+ * @var array<string, string> $errors
+ * @var array<string, string> $old
+ * @var string $timingToken
+ * @var string $honeypotField
+ * @var string $baseUrl
+ * @var \Closure(string, array<string, mixed>=): string $partial
+ */
+?>
 <p><a href="/">&larr; Wszystkie petycje</a></p>
 
 <h1><?= e($petition->title) ?></h1>

@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\Domain\Petition $petition
+ * @var string $baseUrl
+ * @var \Closure(string, array<string, mixed>=): string $partial
+ */
+?>
 <h1>Sprawdź swoją skrzynkę e-mail</h1>
 <p>Dziękujemy za podpisanie petycji „<?= e($petition->title) ?>”.</p>
 <p>Wysłaliśmy wiadomość z linkiem potwierdzającym. Podpis zostanie zaliczony dopiero po kliknięciu w link

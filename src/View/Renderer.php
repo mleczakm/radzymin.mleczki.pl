@@ -48,16 +48,29 @@ final class Renderer
     /** @param array<string, mixed> $data */
     private function renderFile(string $file, array $data): string
     {
-        $render = function (string $__file, array $__data): string {
-            // Includes another template (e.g. '_share'), inheriting the current variables.
-            $partial = fn (string $name, array $data = []): string => $this->render($name, $data + $__data);
-            extract($__data, EXTR_SKIP);
-            ob_start();
-            require $__file;
-
-            return (string) ob_get_clean();
+        // Includes another template (e.g. '_share'), inheriting the current variables.
+        // A full closure rather than an arrow function: it needs the @var below to give $extra a precise type.
+        // @mago-ignore lint:prefer-arrow-function
+        $partial = function (string $name, array $extra = []) use ($data): string {
+            /** @var array<string, mixed> $extra template data always has string keys */
+            return $this->render($name, $extra + $data);
         };
 
-        return $render($file, $data);
+        return self::evaluate($file, $data, $partial);
+    }
+
+    /**
+     * Runs a template in an isolated scope: only the extracted variables and $partial exist there.
+     *
+     * @param array<string, mixed> $__data
+     * @param \Closure(string, array<string, mixed>=): string $partial
+     */
+    private static function evaluate(string $__file, array $__data, \Closure $partial): string
+    {
+        extract($__data, EXTR_SKIP);
+        ob_start();
+        require $__file;
+
+        return (string) ob_get_clean();
     }
 }

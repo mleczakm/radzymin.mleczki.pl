@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Action;
 
 use App\Domain\DuplicateSignatureException;
+use App\Http\RequestInput;
 use App\Http\Responder;
 use App\Runtime\WorkerServices;
 use App\Security\Honeypot;
@@ -39,11 +40,12 @@ final class PetitionSignAction
             return;
         }
 
-        $post = $request->post ?? [];
+        $rawPost = RequestInput::post($request);
+        $post = RequestInput::stringFields($rawPost);
         $ipHash = $this->services->ipHasher->hash(Responder::clientIp($request));
 
         // Silently "succeed" for obvious bots (honeypot filled) so scripts don't learn to adapt.
-        if (Honeypot::looksLikeBot($post)) {
+        if (Honeypot::looksLikeBot($rawPost)) {
             $this->services->logger->info('Rejected submission: honeypot triggered', ['petition' => $petition->slug]);
             Responder::html($response, $this->view->renderPage('thank_you', ['petition' => $petition]));
 
@@ -85,10 +87,10 @@ final class PetitionSignAction
         try {
             $signature = $this->services->signatures->createOnline(
                 petitionSlug: $petition->slug,
-                firstName: trim((string) $post['first_name']),
-                lastName: trim((string) $post['last_name']),
-                city: trim((string) $post['city']),
-                email: trim((string) $post['email']),
+                firstName: trim($post['first_name']),
+                lastName: trim($post['last_name']),
+                city: trim($post['city']),
+                email: trim($post['email']),
                 ipHash: $ipHash,
             );
         } catch (DuplicateSignatureException) {

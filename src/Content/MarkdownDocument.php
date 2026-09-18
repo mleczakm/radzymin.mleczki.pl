@@ -6,7 +6,7 @@ namespace App\Content;
 
 final class MarkdownDocument
 {
-    /** @param array<string, mixed> $frontMatter */
+    /** @param array<array-key, mixed> $frontMatter */
     public function __construct(
         public readonly array $frontMatter,
         public readonly string $html,

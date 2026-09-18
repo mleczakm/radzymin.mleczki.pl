@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var \App\Domain\Topic $topic
+ */
+?>
 <?php $percent = $topic->progressPercent(); ?>
 <p><a href="/">&larr; Strona główna</a></p>
 

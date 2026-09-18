@@ -47,6 +47,18 @@ final class PetitionRepositoryTest extends TestCase
         new PetitionRepository(__DIR__ . '/../fixtures/petitions-invalid');
     }
 
+    public function testNumericSlugStaysAStringOnThePetition(): void
+    {
+        $repository = new PetitionRepository(__DIR__ . '/../fixtures/petitions-numeric');
+
+        $petition = $repository->find('2026');
+
+        // The array key of all() becomes an int here, so callers must use ->slug, not the key.
+        self::assertNotNull($petition);
+        self::assertSame('2026', $petition->slug);
+        self::assertSame('2026', array_values($repository->all())[0]->slug);
+    }
+
     public function testEmptyDirectoryYieldsNoPetitions(): void
     {
         $repository = new PetitionRepository(__DIR__ . '/../fixtures/petitions-empty');

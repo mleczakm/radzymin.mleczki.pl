@@ -11,10 +11,15 @@ namespace App\Security;
 final class ProductionGuard
 {
     public const DEV_SECRET_PREFIX = 'dev-insecure-';
+    // The dev password is public on purpose (see .env); it is only compared against, never used.
+    // @mago-ignore lint:no-literal-password
     private const DEV_ADMIN_PASSWORD = 'admin';
 
-    public static function assertSafe(string $environment, string $appSecret, string $adminPasswordHash): void
-    {
+    public static function assertSafe(
+        string $environment,
+        #[\SensitiveParameter] string $appSecret,
+        #[\SensitiveParameter] string $adminPasswordHash,
+    ): void {
         if ($environment === 'dev') {
             return;
         }

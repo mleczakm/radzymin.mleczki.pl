@@ -1,4 +1,13 @@
 <?php
+/**
+ * @var string $content
+ * @var string $title
+ * @var string|null $description
+ * @var bool $fullWidth
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ */
+?>
+<?php
 $pageDescription = $description ?? 'Niezależna inicjatywa mieszkańców Radzymina: petycje do podpisania i sprawy, którymi się zajmuję.';
 $phone = $organizer['phone'] ?? null;
 ?>
@@ -7,13 +16,13 @@ $phone = $organizer['phone'] ?? null;
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= e($title ?? 'Petycje Radzymin') ?></title>
+<title><?= e($title) ?></title>
 <meta name="description" content="<?= e($pageDescription) ?>">
 <meta name="theme-color" content="#007bc2">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pl_PL">
 <meta property="og:site_name" content="Petycje Radzymin">
-<meta property="og:title" content="<?= e($title ?? 'Petycje Radzymin') ?>">
+<meta property="og:title" content="<?= e($title) ?>">
 <meta property="og:description" content="<?= e($pageDescription) ?>">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">

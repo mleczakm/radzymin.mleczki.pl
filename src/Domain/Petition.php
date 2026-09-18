@@ -28,7 +28,9 @@ final class Petition
         $today = new \DateTimeImmutable('today');
         $deadline = new \DateTimeImmutable($this->deadline);
 
-        return max(0, $today->diff($deadline)->days * ($deadline >= $today ? 1 : -1));
+        $days = (int) $today->diff($deadline)->days;
+
+        return $deadline >= $today ? $days : 0;
     }
 
     public function progressPercent(int $confirmedCount): ?int

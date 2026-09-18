@@ -17,10 +17,6 @@ final class PrivacyAction
 
     public function __invoke(Request $request, Response $response): void
     {
-        $organizer = require dirname(__DIR__, 2) . '/config/organizer.php';
-
-        Responder::html($response, $this->view->renderPage('privacy', [
-            'organizer' => $organizer,
-        ], 'Polityka prywatności'));
+        Responder::html($response, $this->view->renderPage('privacy', [], 'Polityka prywatności'));
     }
 }

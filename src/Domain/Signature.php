@@ -13,7 +13,7 @@ final class Signature
         public readonly string $lastName,
         public readonly string $city,
         public readonly ?string $email,
-        public readonly ?string $token,
+        #[\SensitiveParameter] public readonly ?string $token,
         public readonly SignatureStatus $status,
         public readonly SignatureSource $source,
         public readonly string $createdAt,

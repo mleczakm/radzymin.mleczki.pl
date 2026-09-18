@@ -9,7 +9,7 @@ if (extension_loaded('swoole')) {
 }
 
 if (is_file(dirname(__DIR__) . '/.env') && !getenv('APP_ENV')) {
-    foreach (file(dirname(__DIR__) . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+    foreach (file(dirname(__DIR__) . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
         if (str_starts_with(trim($line), '#') || !str_contains($line, '=')) {
             continue;
         }

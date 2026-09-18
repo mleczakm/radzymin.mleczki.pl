@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use App\Http\RequestInput;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -12,13 +13,13 @@ final class BasicAuth
 {
     public function __construct(
         private readonly string $username,
-        private readonly string $passwordHash,
+        #[\SensitiveParameter] private readonly string $passwordHash,
     ) {
     }
 
     public function check(Request $request, Response $response): bool
     {
-        $header = $request->header['authorization'] ?? '';
+        $header = RequestInput::header($request, 'authorization');
 
         if (str_starts_with($header, 'Basic ')) {
             $decoded = base64_decode(substr($header, 6), true);

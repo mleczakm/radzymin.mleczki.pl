@@ -9,9 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 final class ProductionGuardTest extends TestCase
 {
+    // A made-up value standing in for a real secret in tests.
+    // @mago-ignore lint:no-literal-password
     private const REAL_SECRET = 'a3f1c0de5b7e4d29a3f1c0de5b7e4d29a3f1c0de5b7e4d29a3f1c0de5b7e4d29';
 
-    private static function hash(string $password): string
+    private static function hash(#[\SensitiveParameter] string $password): string
     {
         return password_hash($password, PASSWORD_BCRYPT, ['cost' => 4]);
     }

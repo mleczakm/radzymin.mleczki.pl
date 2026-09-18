@@ -43,6 +43,7 @@ final class TopicRepositoryTest extends TestCase
     public function testUpdatedAtFallsBackToLatestDoneStepDate(): void
     {
         $topic = (new TopicRepository(self::FIXTURES . '/topics'))->find('wniosek-d');
+        self::assertNotNull($topic);
 
         // The planned 2026-06-01 step is not done, so it must not count.
         self::assertSame('2026-04-05', $topic->updatedAt);
@@ -51,6 +52,7 @@ final class TopicRepositoryTest extends TestCase
     public function testTopicWithoutStepsOrDatesHasNoUpdatedAt(): void
     {
         $topic = (new TopicRepository(self::FIXTURES . '/topics'))->find('wniosek-c');
+        self::assertNotNull($topic);
 
         self::assertNull($topic->updatedAt);
         self::assertNull($topic->institution);

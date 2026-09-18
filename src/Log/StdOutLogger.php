@@ -37,6 +37,6 @@ final class StdOutLogger extends AbstractLogger
             $record['context'] = $context;
         }
 
-        fwrite(STDOUT, json_encode($record, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL);
+        fwrite(STDOUT, (json_encode($record, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR) ?: '{}') . PHP_EOL);
     }
 }

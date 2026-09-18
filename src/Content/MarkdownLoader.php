@@ -37,24 +37,24 @@ final class MarkdownLoader
             throw new \RuntimeException("Cannot read content file: $file");
         }
 
+        $matches = [];
         if (!preg_match(self::FRONT_MATTER_PATTERN, $raw, $matches)) {
             throw new \RuntimeException("Content file is missing YAML front matter delimited by \"---\": $file");
         }
 
-        $frontMatter = Yaml::parse($matches[1]);
-        if (!is_array($frontMatter)) {
-            $frontMatter = [];
-        }
+        $parsed = Yaml::parse($matches[1]);
+        $frontMatter = is_array($parsed) ? $parsed : [];
 
         foreach ($requiredFields as $field) {
-            if (empty($frontMatter[$field])) {
+            $value = $frontMatter[$field] ?? null;
+            if ($value === null || $value === '' || $value === false || $value === []) {
                 throw new \RuntimeException("Content file \"$file\" is missing required front matter field \"$field\".");
             }
         }
 
         return new MarkdownDocument(
             $frontMatter,
-            (string) $this->markdown->convert(trim($matches[2]))->getContent(),
+            $this->markdown->convert(trim($matches[2]))->getContent(),
             $file,
         );
     }

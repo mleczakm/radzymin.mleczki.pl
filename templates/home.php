@@ -1,4 +1,17 @@
 <?php
+/**
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var array<string, \App\Domain\Petition> $petitions
+ * @var array<string, int> $counts
+ * @var array<string, int|null> $percents
+ * @var \App\Domain\Petition|null $featured
+ * @var int $totalSignatures
+ * @var int $activeTopicCount
+ * @var array<string, \App\Domain\Topic> $topics
+ * @var array{heading: string, html: string}|null $about
+ */
+?>
+<?php
 $phone = $organizer['phone'] ?? null;
 $mailto = 'mailto:' . $organizer['contactEmail'] . '?subject=' . rawurlencode('Petycje Radzymin — wiadomość');
 $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
@@ -45,7 +58,8 @@ $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
         <a href="#kontakt">Napisz do mnie</a>.</p>
     <?php else: ?>
       <ul class="petition-list">
-        <?php foreach ($petitions as $slug => $petition): ?>
+        <?php foreach ($petitions as $petition): ?>
+          <?php $slug = $petition->slug; ?>
           <?php $percent = $percents[$slug]; ?>
           <li class="petition-card">
             <h3><a href="/petycja/<?= e($slug) ?>"><?= e($petition->title) ?></a></h3>

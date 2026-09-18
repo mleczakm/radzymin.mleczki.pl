@@ -28,19 +28,19 @@ use Swoole\Table;
  */
 final class WorkerServices
 {
-    public readonly PDO $pdo;
-    public readonly PetitionRepository $petitions;
-    public readonly TopicRepository $topics;
+    public private(set) PDO $pdo;
+    public private(set) PetitionRepository $petitions;
+    public private(set) TopicRepository $topics;
     /** @var array{heading: string, html: string}|null */
-    public readonly ?array $about;
-    public readonly SignatureRepository $signatures;
-    public readonly ConfirmationMailer $mailer;
-    public readonly LoggerInterface $logger;
-    public readonly FormTimingToken $timingToken;
-    public readonly RateLimiter $rateLimiter;
-    public readonly IpHasher $ipHasher;
-    public readonly BasicAuth $adminAuth;
-    public readonly string $baseUrl;
+    public private(set) ?array $about;
+    public private(set) SignatureRepository $signatures;
+    public private(set) ConfirmationMailer $mailer;
+    public private(set) LoggerInterface $logger;
+    public private(set) FormTimingToken $timingToken;
+    public private(set) RateLimiter $rateLimiter;
+    public private(set) IpHasher $ipHasher;
+    public private(set) BasicAuth $adminAuth;
+    public private(set) string $baseUrl;
 
     public function __construct(private readonly Table $rateLimitTable)
     {

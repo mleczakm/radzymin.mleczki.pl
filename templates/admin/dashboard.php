@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var list<array{petition: \App\Domain\Petition, confirmed: int, pending: int}> $rows
+ */
+?>
 <h1>Panel administracyjny</h1>
 
 <table class="admin-table">

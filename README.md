@@ -204,13 +204,30 @@ composer install
 php bin/server
 ```
 
-## Testy
+## Testy i analiza statyczna
 
 ```bash
 composer install
-composer run-script lint   # php -l dla wszystkich plików
-composer test               # PHPUnit
+composer check              # wszystko naraz: php -l, mago analyze, mago lint, PHPUnit
+composer run-script analyze     # mago analyze — analiza statyczna (typy, null, mixed, szablony)
+composer run-script lint:style  # mago lint — reguły stylu i bezpieczeństwa
+composer test                   # PHPUnit
 ```
+
+Analiza statyczna to [mago](https://github.com/carthage-software/mago) (konfiguracja w
+[mago.toml](mago.toml)), a typy klas Swoole pochodzą z `swoole/ide-helper` (ta sama wersja co
+rozszerzenie w obrazie), więc działa też bez zainstalowanego `ext-swoole`. Analizowane są
+`src/`, `config/`, `tests/` **i szablony** — zmienne wstrzykiwane do szablonu deklaruje blok
+`@var` na jego początku (rozumie go też PhpStorm, dzięki czemu znikają „undefined variable”).
+Po dodaniu zmiennej do szablonu dopisz ją do tego bloku.
+
+Świadome wyjątki w `mago.toml`: reguła `mixed-assignment` (zgłaszałaby każdy odczyt
+nietypowanych danych tuż przed ich zawężeniem), reguły stylu (`?:`, `isset`, nazwane argumenty)
+i metryki projektowe (liczba parametrów/metod). Pojedyncze wyjątki są w kodzie jako
+`@mago-ignore` z uzasadnieniem. Sekrety i tokeny w konstruktorach mają `#[\SensitiveParameter]`,
+żeby nie trafiały do śladów stosu w logach.
+
+CI (`.github/workflows/ci.yml`) uruchamia analizator i linter jako osobne zadanie.
 
 ## Wdrożenie
 

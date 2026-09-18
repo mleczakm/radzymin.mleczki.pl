@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\Domain\Petition $petition
+ * @var int|null $added
+ * @var list<string> $skipped
+ */
+?>
 <p><a href="/admin">&larr; Panel administracyjny</a></p>
 
 <h1>Dopisz podpisy z listy papierowej</h1>

@@ -19,7 +19,7 @@ final class RateLimiter
     {
     }
 
-    public static function createTable(int $rows = 65536): Table
+    public static function createTable(int $rows = 65_536): Table
     {
         $table = new Table($rows);
         $table->column('count', Table::TYPE_INT);
@@ -34,7 +34,7 @@ final class RateLimiter
         $now = time();
         $row = $this->table->get($ipHash);
 
-        if ($row === false || ($now - (int) $row['window_start']) > self::WINDOW_SECONDS) {
+        if (!is_array($row) || ($now - (int) $row['window_start']) > self::WINDOW_SECONDS) {
             $this->table->set($ipHash, ['count' => 1, 'window_start' => $now]);
 
             return false;

@@ -56,7 +56,9 @@ final class SignatureRepositoryTest extends TestCase
         self::assertSame(1, $this->repository->countConfirmed('przyklad'));
         self::assertSame(0, $this->repository->countPending('przyklad'));
 
+        self::assertNotNull($signature->token);
         $reloaded = $this->repository->findByToken($signature->token);
+        self::assertNotNull($reloaded);
         self::assertSame(SignatureStatus::Confirmed, $reloaded->status);
     }
 

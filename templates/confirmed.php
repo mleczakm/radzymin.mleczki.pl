@@ -1,3 +1,12 @@
+<?php
+/**
+ * @var \App\Domain\Petition|null $petition
+ * @var bool $alreadyConfirmed
+ * @var string $progressHtml
+ * @var string $baseUrl
+ * @var \Closure(string, array<string, mixed>=): string $partial
+ */
+?>
 <div class="confirmed-page">
   <div class="confirmed-icon" aria-hidden="true">
     <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Action;
 
-use App\Http\Responder;
 use App\Runtime\WorkerServices;
 use App\View\Renderer;
 use Dompdf\Dompdf;
@@ -31,11 +30,8 @@ final class PetitionPdfAction
             return;
         }
 
-        $organizer = require dirname(__DIR__, 2) . '/config/organizer.php';
-
         $html = $this->view->render('pdf/lista', [
             'petition' => $petition,
-            'organizer' => $organizer,
             'rows' => 28,
         ]);
 

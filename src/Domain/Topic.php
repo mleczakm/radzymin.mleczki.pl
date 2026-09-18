@@ -36,4 +36,11 @@ final class Topic
 
         return (int) floor($done / count($this->steps) * 100);
     }
+
+    /** Display order: active matters first, then by last update (newest first), then by title. */
+    public static function compare(self $a, self $b): int
+    {
+        return [$a->status->sortOrder(), $b->updatedAt ?? '', $a->title]
+            <=> [$b->status->sortOrder(), $a->updatedAt ?? '', $b->title];
+    }
 }

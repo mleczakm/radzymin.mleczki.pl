@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ */
+?>
 <h1>Polityka prywatności</h1>
 
 <p>Poniższe informacje dotyczą przetwarzania danych osobowych osób podpisujących petycje

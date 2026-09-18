@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
+use App\Content\MarkdownDocument;
 use App\Content\MarkdownLoader;
 
 /**
@@ -22,37 +23,41 @@ final class TopicRepository
         $topics = [];
 
         foreach ($loader->files($contentDir) as $file) {
-            $document = $loader->load($file, ['slug', 'title', 'summary', 'status']);
-            $frontMatter = $document->frontMatter;
-
-            $status = TopicStatus::tryFrom((string) $frontMatter['status'])
-                ?? throw new \RuntimeException(sprintf(
-                    'Topic file "%s" has invalid status "%s" (allowed: %s).',
-                    $file,
-                    (string) $frontMatter['status'],
-                    implode(', ', array_map(static fn (TopicStatus $s): string => $s->value, TopicStatus::cases())),
-                ));
-
-            $steps = self::parseSteps($frontMatter['steps'] ?? [], $file);
-
-            $topic = new Topic(
-                slug: (string) $frontMatter['slug'],
-                title: (string) $frontMatter['title'],
-                summary: (string) $frontMatter['summary'],
-                bodyHtml: $document->html,
-                status: $status,
-                institution: isset($frontMatter['institution']) ? (string) $frontMatter['institution'] : null,
-                updatedAt: MarkdownLoader::normalizeDate($frontMatter['updatedAt'] ?? null) ?? self::latestDoneStepDate($steps),
-                steps: $steps,
-            );
-
+            $topic = self::parseTopic($loader->load($file, ['slug', 'title', 'summary', 'status']));
             $topics[$topic->slug] = $topic;
         }
 
-        uasort($topics, static fn (Topic $a, Topic $b): int => [$a->status->sortOrder(), $b->updatedAt ?? '', $a->title]
-            <=> [$b->status->sortOrder(), $a->updatedAt ?? '', $b->title]);
+        uasort($topics, Topic::compare(...));
 
         $this->topics = $topics;
+    }
+
+    private static function parseTopic(MarkdownDocument $document): Topic
+    {
+        $frontMatter = $document->frontMatter;
+        $steps = self::parseSteps($frontMatter['steps'] ?? [], $document->file);
+        $institution = $frontMatter['institution'] ?? null;
+
+        return new Topic(
+            slug: (string) $frontMatter['slug'],
+            title: (string) $frontMatter['title'],
+            summary: (string) $frontMatter['summary'],
+            bodyHtml: $document->html,
+            status: self::parseStatus((string) $frontMatter['status'], $document->file),
+            institution: $institution === null ? null : (string) $institution,
+            updatedAt: MarkdownLoader::normalizeDate($frontMatter['updatedAt'] ?? null) ?? TopicStep::latestDoneDate($steps),
+            steps: $steps,
+        );
+    }
+
+    private static function parseStatus(string $value, string $file): TopicStatus
+    {
+        return TopicStatus::tryFrom($value) ?? throw new \RuntimeException(sprintf(
+            'Topic file "%s" has invalid status "%s" (allowed: %s).',
+            $file,
+            $value,
+            implode(', ', array_map(static fn (TopicStatus $status): string => $status->value, TopicStatus::cases())),
+        ));
     }
 
     /** @return list<TopicStep> */
@@ -63,29 +68,11 @@ final class TopicRepository
         }
 
         $steps = [];
-        foreach ($rawSteps as $index => $rawStep) {
-            if (!is_array($rawStep) || empty($rawStep['title'])) {
-                throw new \RuntimeException(sprintf('Topic file "%s": step #%d is missing a "title".', $file, $index + 1));
-            }
-
-            $steps[] = new TopicStep(
-                title: (string) $rawStep['title'],
-                date: MarkdownLoader::normalizeDate($rawStep['date'] ?? null),
-                done: (bool) ($rawStep['done'] ?? false),
-            );
+        foreach (array_values($rawSteps) as $index => $rawStep) {
+            $steps[] = TopicStep::fromFrontMatter($rawStep, $file, $index + 1);
         }
 
         return $steps;
-    }
-
-    /** @param list<TopicStep> $steps */
-    private static function latestDoneStepDate(array $steps): ?string
-    {
-        $dates = array_filter(
-            array_map(static fn (TopicStep $step): ?string => $step->done ? $step->date : null, $steps),
-        );
-
-        return $dates === [] ? null : max($dates);
     }
 
     /** @return array<string, Topic> */

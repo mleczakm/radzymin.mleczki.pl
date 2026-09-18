@@ -24,9 +24,10 @@ final class HomeAction
 
         $counts = [];
         $percents = [];
-        foreach ($petitions as $slug => $petition) {
-            $counts[$slug] = $this->services->signatures->countConfirmed($slug);
-            $percents[$slug] = $petition->progressPercent($counts[$slug]);
+        foreach ($petitions as $petition) {
+            // Not the array key: PHP turns a numeric slug such as "2026" into an int key.
+            $counts[$petition->slug] = $this->services->signatures->countConfirmed($petition->slug);
+            $percents[$petition->slug] = $petition->progressPercent($counts[$petition->slug]);
         }
 
         $activeTopics = array_filter(

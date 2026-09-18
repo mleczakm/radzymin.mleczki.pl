@@ -19,4 +19,9 @@ final class HoneypotTest extends TestCase
     {
         self::assertTrue(Honeypot::looksLikeBot([Honeypot::FIELD_NAME => 'https://spam.example']));
     }
+
+    public function testNestedValueLooksLikeBot(): void
+    {
+        self::assertTrue(Honeypot::looksLikeBot([Honeypot::FIELD_NAME => ['x']]));
+    }
 }

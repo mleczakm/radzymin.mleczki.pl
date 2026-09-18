@@ -1,4 +1,11 @@
-<?php /** @var \App\Domain\Petition $petition */ ?>
+<?php
+/**
+ * @var \App\Domain\Petition $petition
+ * @var int $confirmedCount
+ * @var int|null $percent
+ * @var int|null $daysRemaining
+ */
+?>
 <div class="progress-block">
   <?php if ($percent === null): ?>
     <p class="signature-count"><strong><?= (int) $confirmedCount ?></strong> potwierdzonych podpisów</p>
@@ -18,7 +25,7 @@
     <div class="progress-bar" role="progressbar" aria-valuenow="<?= (int) $percent ?>" aria-valuemin="0" aria-valuemax="100">
       <div class="progress-bar-fill" style="width: <?= (int) $percent ?>%"></div>
     </div>
-    <?php $remaining = max(0, $petition->goal - $confirmedCount); ?>
+    <?php $remaining = max(0, (int) $petition->goal - $confirmedCount); ?>
     <?php if ($remaining > 0): ?>
       <p class="progress-remaining">Brakuje jeszcze <strong><?= (int) $remaining ?></strong> podpisów do osiągnięcia celu.</p>
     <?php else: ?>

@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\Domain\Petition $petition
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var int $rows
+ */
+?>
 <!doctype html>
 <html lang="pl">
 <head>

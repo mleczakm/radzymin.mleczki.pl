@@ -24,18 +24,23 @@ final class Router
 
     private function add(string $method, string $pattern, callable $handler): void
     {
-        $regex = '#^' . preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern) . '$#';
+        $regex = '#^' . (string) preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern) . '$#';
         $this->routes[] = [$method, $regex, $handler];
     }
 
     public function dispatch(Request $request, Response $response): void
     {
-        $method = $request->server['request_method'] ?? 'GET';
-        $path = rtrim(parse_url($request->server['request_uri'] ?? '/', PHP_URL_PATH) ?: '/', '/');
+        $method = RequestInput::server($request, 'request_method') ?: 'GET';
+        $path = rtrim(parse_url(RequestInput::server($request, 'request_uri') ?: '/', PHP_URL_PATH) ?: '/', '/');
         $path = $path === '' ? '/' : $path;
 
         foreach ($this->routes as [$routeMethod, $regex, $handler]) {
-            if ($routeMethod !== $method || !preg_match($regex, $path, $matches)) {
+            if ($routeMethod !== $method) {
+                continue;
+            }
+
+            $matches = [];
+            if (!preg_match($regex, $path, $matches)) {
                 continue;
             }
 

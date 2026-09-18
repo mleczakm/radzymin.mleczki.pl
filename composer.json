@@ -15,7 +15,9 @@
         "symfony/yaml": "^8.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^13.3"
+        "carthage-software/mago": "^1.49",
+        "phpunit/phpunit": "^13.3",
+        "swoole/ide-helper": "^6.2"
     },
     "autoload": {
         "psr-4": {
@@ -40,6 +42,14 @@
     },
     "scripts": {
         "test": "phpunit",
-        "lint": "find src bin config -name '*.php' -print0 | xargs -0 -n1 php -l"
+        "lint": "find src bin config -name '*.php' -print0 | xargs -0 -n1 php -l",
+        "analyze": "mago analyze",
+        "lint:style": "mago lint",
+        "check": [
+            "@lint",
+            "@analyze",
+            "@lint:style",
+            "@test"
+        ]
     }
 }

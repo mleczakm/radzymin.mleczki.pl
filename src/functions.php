@@ -43,10 +43,16 @@ if (!function_exists('share_links')) {
 }
 
 if (!function_exists('env')) {
+    /**
+     * @template T of string|null
+     * @param T $default
+     * @return ($default is string ? string : string|null)
+     */
     function env(string $key, ?string $default = null): ?string
     {
+        // $_SERVER also holds non-string entries (e.g. argv), so accept strings only.
         $value = $_SERVER[$key] ?? getenv($key);
 
-        return $value === false || $value === null ? $default : $value;
+        return is_string($value) ? $value : $default;
     }
 }

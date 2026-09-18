@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 final class Responder
@@ -16,13 +17,13 @@ final class Responder
     }
 
     /** Trusts X-Forwarded-For as set by the Cloudflare/Caddy proxy in front of the app in production. */
-    public static function clientIp(\Swoole\Http\Request $request): string
+    public static function clientIp(Request $request): string
     {
-        $forwarded = $request->header['x-forwarded-for'] ?? null;
-        if (is_string($forwarded) && $forwarded !== '') {
+        $forwarded = RequestInput::header($request, 'x-forwarded-for');
+        if ($forwarded !== '') {
             return trim(explode(',', $forwarded)[0]);
         }
 
-        return $request->server['remote_addr'] ?? '0.0.0.0';
+        return RequestInput::server($request, 'remote_addr') ?: '0.0.0.0';
     }
 }
