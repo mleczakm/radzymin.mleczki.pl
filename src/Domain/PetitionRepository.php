@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
-use League\CommonMark\CommonMarkConverter;
-use Symfony\Component\Yaml\Yaml;
+use App\Content\MarkdownLoader;
 
 /**
  * Loads petitions from Markdown files (YAML front matter + Markdown body) in
@@ -15,64 +14,31 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class PetitionRepository
 {
-    private const FRONT_MATTER_PATTERN = '/^---\s*\n(.*?)\n---\s*\n?(.*)$/s';
-
     /** @var array<string, Petition> */
     private array $petitions = [];
 
     public function __construct(string $contentDir)
     {
-        $markdown = new CommonMarkConverter();
+        $loader = new MarkdownLoader();
 
-        foreach (glob(rtrim($contentDir, '/') . '/*.md') ?: [] as $file) {
-            $petition = self::parseFile($file, $markdown);
+        foreach ($loader->files($contentDir) as $file) {
+            $document = $loader->load($file, ['slug', 'title', 'lead']);
+            $frontMatter = $document->frontMatter;
+            $goal = $frontMatter['goal'] ?? null;
+
+            $petition = new Petition(
+                slug: (string) $frontMatter['slug'],
+                title: (string) $frontMatter['title'],
+                lead: (string) $frontMatter['lead'],
+                bodyHtml: $document->html,
+                createdAt: MarkdownLoader::normalizeDate($frontMatter['createdAt'] ?? null)
+                    ?? date('Y-m-d', filemtime($file) ?: time()),
+                goal: is_numeric($goal) ? (int) $goal : null,
+                deadline: MarkdownLoader::normalizeDate($frontMatter['deadline'] ?? null),
+            );
+
             $this->petitions[$petition->slug] = $petition;
         }
-    }
-
-    private static function parseFile(string $file, CommonMarkConverter $markdown): Petition
-    {
-        $raw = file_get_contents($file);
-        if ($raw === false) {
-            throw new \RuntimeException("Cannot read petition file: $file");
-        }
-
-        if (!preg_match(self::FRONT_MATTER_PATTERN, $raw, $matches)) {
-            throw new \RuntimeException("Petition file is missing YAML front matter delimited by \"---\": $file");
-        }
-
-        /** @var array<string, mixed> $frontMatter */
-        $frontMatter = Yaml::parse($matches[1]) ?? [];
-
-        foreach (['slug', 'title', 'lead'] as $required) {
-            if (empty($frontMatter[$required])) {
-                throw new \RuntimeException("Petition file \"$file\" is missing required front matter field \"$required\".");
-            }
-        }
-
-        $goal = $frontMatter['goal'] ?? null;
-
-        return new Petition(
-            slug: (string) $frontMatter['slug'],
-            title: (string) $frontMatter['title'],
-            lead: (string) $frontMatter['lead'],
-            bodyHtml: (string) $markdown->convert(trim($matches[2]))->getContent(),
-            createdAt: self::normalizeDate($frontMatter['createdAt'] ?? null)
-                ?? date('Y-m-d', filemtime($file) ?: time()),
-            goal: is_numeric($goal) ? (int) $goal : null,
-            deadline: self::normalizeDate($frontMatter['deadline'] ?? null),
-        );
-    }
-
-    /** YAML parses an unquoted "2026-01-15" as a Unix timestamp (int), not a string — normalize either form. */
-    private static function normalizeDate(mixed $date): ?string
-    {
-        return match (true) {
-            $date instanceof \DateTimeInterface => $date->format('Y-m-d'),
-            is_numeric($date) => date('Y-m-d', (int) $date),
-            is_string($date) && $date !== '' => $date,
-            default => null,
-        };
     }
 
     /** @return array<string, Petition> */

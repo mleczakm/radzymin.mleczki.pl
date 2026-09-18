@@ -10,6 +10,22 @@ if (!function_exists('e')) {
     }
 }
 
+if (!function_exists('format_date')) {
+    /** Formats an ISO date (Y-m-d) as dd.mm.yyyy for display; empty string for null/empty input. */
+    function format_date(?string $isoDate): string
+    {
+        if ($isoDate === null || $isoDate === '') {
+            return '';
+        }
+
+        try {
+            return (new DateTimeImmutable($isoDate))->format('d.m.Y');
+        } catch (Exception) {
+            return $isoDate;
+        }
+    }
+}
+
 if (!function_exists('env')) {
     function env(string $key, ?string $default = null): ?string
     {

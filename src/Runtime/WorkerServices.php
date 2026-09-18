@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Runtime;
 
 use App\Domain\PetitionRepository;
+use App\Domain\TopicRepository;
 use App\Mail\ConfirmationMailer;
 use App\Mail\MailerFactory;
 use App\Security\BasicAuth;
@@ -28,6 +29,7 @@ final class WorkerServices
 {
     public readonly PDO $pdo;
     public readonly PetitionRepository $petitions;
+    public readonly TopicRepository $topics;
     public readonly SignatureRepository $signatures;
     public readonly ConfirmationMailer $mailer;
     public readonly LoggerInterface $logger;
@@ -47,6 +49,7 @@ final class WorkerServices
 
         $this->pdo = Database::connect(env('DB_PATH', dirname(__DIR__, 2) . '/var/data.sqlite'));
         $this->petitions = new PetitionRepository(dirname(__DIR__, 2) . '/content/petitions');
+        $this->topics = new TopicRepository(dirname(__DIR__, 2) . '/content/topics');
         $this->signatures = new SignatureRepository($this->pdo);
         $this->logger = \App\Log\Factory::create(filter_var(env('APP_DEBUG', '0'), FILTER_VALIDATE_BOOLEAN));
         $this->timingToken = new FormTimingToken($appSecret);

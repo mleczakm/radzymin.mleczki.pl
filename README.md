@@ -11,6 +11,7 @@ ale z bieżącą wersją `ext-swoole`.
 1. **Podmień treść petycji** — dodaj/edytuj pliki w
    [content/petitions/](content/petitions/) (jeden plik Markdown na petycję, format opisany
    niżej). Obecnie jest tam wyłącznie przykładowy wpis.
+   To samo dotyczy przykładowej sprawy w [content/topics/](content/topics/).
 2. **Uzupełnij dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
    (imię i nazwisko / nazwa organizatora, adres, e-mail kontaktowy) lub przez zmienne
    `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
@@ -47,6 +48,50 @@ Pełna treść petycji w **Markdown** — akapity, listy, pogrubienia itd.
 Plik parsowany jest raz na proces workera (przy starcie), a wynikowy HTML trzymany w
 pamięci przez cały czas życia workera — dodanie kolejnej petycji nie kosztuje nic przy obsłudze
 requestów, tylko przy starcie serwera.
+
+## Sprawy („Czym się zajmuję”)
+
+Poza petycjami strona główna pokazuje sprawy, którymi się zajmujesz — wnioski do instytucji,
+pisma, inicjatywy — ze statusem i postępem. Każda sprawa to plik Markdown w
+[content/topics/](content/topics/) (lista na `/`, szczegóły na `/sprawy/{slug}`), np.
+`content/topics/wniosek-do-urzedu.md`:
+
+```markdown
+---
+slug: wniosek-do-urzedu
+title: "Wniosek o remont chodnika przy ul. Przykładowej"
+summary: Krótki opis widoczny na liście na stronie głównej.
+status: waiting
+institution: "Urząd Miasta i Gminy"
+updatedAt: 2026-09-10
+steps:
+  - title: Przygotowanie wniosku
+    date: 2026-08-20
+    done: true
+  - title: Złożenie wniosku
+    date: 2026-09-01
+    done: true
+  - title: Odpowiedź urzędu
+    done: false
+---
+
+Szczegóły sprawy w **Markdown** — treść wniosku, linki do pism, uzasadnienie.
+```
+
+Wymagane: `slug`, `title`, `summary`, `status`. `status` to jedno z: `planned` (planowane),
+`in_progress` (w toku), `waiting` (oczekuje na odpowiedź), `completed` (zakończone),
+`rejected` (odrzucone). Opcjonalne:
+
+- `institution` — adresat/instytucja, pokazywana pod tytułem.
+- `steps` — kroki sprawy (`title`, opcjonalnie `date`, `done: true|false`). Z nich liczony jest
+  pasek postępu (odsetek zrealizowanych kroków; sprawa `completed` zawsze ma 100%) oraz oś czasu
+  „Przebieg sprawy” na stronie szczegółów.
+- `updatedAt` — data ostatniej aktualizacji; domyślnie data ostatniego zrealizowanego kroku.
+
+Sprawy aktywne (w toku → oczekujące → planowane) są na górze, potem zakończone i odrzucone;
+w obrębie statusu — od najnowszej aktualizacji. Tak jak petycje, pliki są parsowane raz na
+proces workera przy starcie i trzymane w pamięci, więc **zmiana statusu wymaga nowego
+wdrożenia** (tag), a nie tylko edycji pliku na serwerze.
 
 ## Architektura
 

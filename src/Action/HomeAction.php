@@ -27,6 +27,7 @@ final class HomeAction
         $html = $this->view->renderPage('home', [
             'petitions' => $petitions,
             'counts' => $counts,
+            'topics' => $this->services->topics->all(),
         ], 'Petycje Radzymin');
 
         Responder::html($response, $html);
