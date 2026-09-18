@@ -226,7 +226,7 @@ $formEndpoint = $organizer['contactFormEndpoint'];
             <button type="submit" class="button button-accent">Wyślij wiadomość</button>
             <p class="form-status" data-contact-status role="status"></p>
           </form>
-          <script src="/contact-form.js" defer></script>
+          <script src="<?= e(asset_url('contact-form.js')) ?>" defer></script>
         <?php endif; ?>
       </div>
     </div>

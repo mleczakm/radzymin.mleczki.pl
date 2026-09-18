@@ -26,7 +26,7 @@ $phone = $organizer['phone'] ?? null;
 <meta property="og:description" content="<?= e($pageDescription) ?>">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="<?= e(asset_url('style.css')) ?>">
 </head>
 <body>
 <a class="skip-link" href="#tresc">Przejdź do treści</a>

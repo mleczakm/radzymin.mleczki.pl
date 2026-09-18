@@ -26,6 +26,22 @@ if (!function_exists('format_date')) {
     }
 }
 
+if (!function_exists('asset_url')) {
+    /**
+     * URL of a file in public/ with a version taken from its modification time. The server sends
+     * no Cache-Control header, so browsers guess freshness from Last-Modified; without a changing
+     * URL, returning visitors could get new HTML with the previous CSS/JS right after a deploy.
+     */
+    function asset_url(string $path): string
+    {
+        $path = '/' . ltrim($path, '/');
+        $file = dirname(__DIR__) . '/public' . $path;
+        $modified = is_file($file) ? filemtime($file) : false;
+
+        return $modified === false ? $path : $path . '?v=' . $modified;
+    }
+}
+
 if (!function_exists('share_links')) {
     /**
      * Plain-link share targets (no JavaScript, no third-party scripts or trackers).
