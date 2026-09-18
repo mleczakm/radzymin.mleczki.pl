@@ -42,6 +42,17 @@ if (!function_exists('share_links')) {
     }
 }
 
+if (!function_exists('formspree_endpoint')) {
+    /**
+     * Accepts only https://formspree.io/f/<id>, so visitors' messages are never posted to an
+     * arbitrary URL because of a typo or a bad value in the environment.
+     */
+    function formspree_endpoint(?string $url): ?string
+    {
+        return $url !== null && preg_match('#^https://formspree\.io/f/[A-Za-z0-9]+\z#', $url) === 1 ? $url : null;
+    }
+}
+
 if (!function_exists('env')) {
     /**
      * @template T of string|null

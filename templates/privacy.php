@@ -1,6 +1,6 @@
 <?php
 /**
- * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null} $organizer
  */
 ?>
 <h1>Polityka prywatności</h1>
@@ -25,6 +25,16 @@ osoby podpisującej (art. 6 ust. 1 lit. a RODO).</p>
 <p>Dane mogą zostać przekazane adresatowi petycji w zakresie niezbędnym do jej rozpatrzenia oraz
 podmiotom technicznie obsługującym serwis (hosting, dostawca poczty e-mail używany wyłącznie
 do wysyłki linku potwierdzającego).</p>
+
+<h2 id="formularz-kontaktowy">Formularz kontaktowy</h2>
+<p>Jeśli napiszesz do mnie przez formularz na stronie głównej, podane w nim dane — imię (opcjonalnie),
+adres e-mail i treść wiadomości — służą wyłącznie do odpowiedzi na wiadomość (podstawa: zgoda,
+art. 6 ust. 1 lit. a RODO). Formularz obsługuje dostawca Formspree, Inc. (USA), który przekazuje mi
+wiadomość e-mailem i może przechowywać jej kopię, więc dane mogą być przetwarzane poza Europejskim
+Obszarem Gospodarczym. Szczegóły:
+<a href="https://formspree.io/legal/privacy-policy/" rel="noopener noreferrer" target="_blank">polityka
+prywatności Formspree</a>. Zawsze możesz też napisać bezpośrednio na adres e-mail z sekcji
+„Administrator danych”.</p>
 
 <h2>Publiczna lista „Niedawno podpisali”</h2>
 <p>Po potwierdzeniu podpisu Twoje <strong>imię i pierwsza litera nazwiska</strong> (np. „Jan K.”)

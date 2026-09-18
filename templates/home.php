@@ -1,6 +1,6 @@
 <?php
 /**
- * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null} $organizer
  * @var array<string, \App\Domain\Petition> $petitions
  * @var array<string, int> $counts
  * @var array<string, int|null> $percents
@@ -15,6 +15,7 @@
 $phone = $organizer['phone'] ?? null;
 $mailto = 'mailto:' . $organizer['contactEmail'] . '?subject=' . rawurlencode('Petycje Radzymin — wiadomość');
 $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
+$formEndpoint = $organizer['contactFormEndpoint'];
 ?>
 <section class="hero">
   <div class="wrap hero-inner">
@@ -165,20 +166,69 @@ $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
 <section class="section contact" id="kontakt">
   <div class="wrap">
     <div class="contact-card">
-      <h2><?= e($about['heading'] ?? 'Napisz do mnie') ?></h2>
-      <?php if ($about !== null): ?>
-        <div class="contact-about"><?= $about['html'] ?></div>
-      <?php endif; ?>
+      <div class="contact-grid<?= $formEndpoint !== null ? ' contact-grid-with-form' : '' ?>">
+        <div class="contact-main">
+          <h2><?= e($about['heading'] ?? 'Napisz do mnie') ?></h2>
+          <?php if ($about !== null): ?>
+            <div class="contact-about"><?= $about['html'] ?></div>
+          <?php endif; ?>
 
-      <div class="contact-actions">
-        <a class="button button-accent button-lg" href="<?= e($mailto) ?>">Napisz e-mail</a>
-        <?php if ($phone): ?>
-          <a class="button button-outline-light button-lg" href="tel:<?= e(preg_replace('/[^\d+]/', '', $phone)) ?>">Zadzwoń: <?= e($phone) ?></a>
+          <div class="contact-actions">
+            <a class="button button-accent button-lg" href="<?= e($mailto) ?>">Napisz e-mail</a>
+            <?php if ($phone): ?>
+              <a class="button button-outline-light button-lg" href="tel:<?= e(preg_replace('/[^\d+]/', '', $phone)) ?>">Zadzwoń: <?= e($phone) ?></a>
+            <?php endif; ?>
+          </div>
+          <p class="contact-address">
+            <?= e($organizer['contactEmail']) ?>
+          </p>
+        </div>
+
+        <?php if ($formEndpoint !== null): ?>
+          <?php /* Works without JavaScript (plain POST to Formspree); /contact-form.js keeps the visitor on the page. */ ?>
+          <form class="contact-form" method="post" action="<?= e($formEndpoint) ?>"
+                data-contact-form data-fallback-email="<?= e($organizer['contactEmail']) ?>">
+            <h3>Wyślij wiadomość</h3>
+
+            <input type="hidden" name="_subject" value="Petycje Radzymin — wiadomość ze strony">
+            <div class="field hp-field" aria-hidden="true">
+              <label for="contact-gotcha">Nie wypełniaj tego pola</label>
+              <input type="text" id="contact-gotcha" name="_gotcha" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="contact-name">Imię <span class="optional">(opcjonalnie)</span></label>
+              <input type="text" id="contact-name" name="name" autocomplete="name" maxlength="100">
+            </div>
+
+            <div class="field">
+              <label for="contact-email">Adres e-mail</label>
+              <input type="email" id="contact-email" name="email" autocomplete="email" required maxlength="190">
+              <p class="field-hint">Na ten adres wyślę odpowiedź.</p>
+            </div>
+
+            <div class="field">
+              <label for="contact-message">Wiadomość</label>
+              <textarea id="contact-message" name="message" rows="5" required maxlength="4000"></textarea>
+            </div>
+
+            <div class="field field-checkbox">
+              <label>
+                <input type="checkbox" name="consent" value="tak" required>
+                <span>
+                  Wyrażam zgodę na przetwarzanie moich danych (imię, e-mail, treść wiadomości) w celu
+                  odpowiedzi na wiadomość, zgodnie z
+                  <a href="/polityka-prywatnosci#formularz-kontaktowy">polityką prywatności</a>.
+                </span>
+              </label>
+            </div>
+
+            <button type="submit" class="button button-accent">Wyślij wiadomość</button>
+            <p class="form-status" data-contact-status role="status"></p>
+          </form>
+          <script src="/contact-form.js" defer></script>
         <?php endif; ?>
       </div>
-      <p class="contact-address">
-        <?= e($organizer['contactEmail']) ?>
-      </p>
     </div>
   </div>
 </section>

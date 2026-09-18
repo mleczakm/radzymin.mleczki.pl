@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\Domain\Petition $petition
- * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null} $organizer
  * @var int $rows
  */
 ?>

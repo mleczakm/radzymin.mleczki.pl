@@ -39,6 +39,14 @@ ale z bieżącą wersją `ext-swoole`.
   [content/about.md](content/about.md) (front matter `heading`, treść w Markdown), a adres e-mail
   i opcjonalny telefon z `config/organizer.php` (`ORGANIZER_EMAIL`, `ORGANIZER_PHONE`). Zaproszenie
   do kontaktu jest też pod formularzem podpisu, na stronie po wysłaniu i po potwierdzeniu.
+- **Formularz kontaktowy** (Formspree): w sekcji kontaktowej, gdy ustawiono `CONTACT_FORM_ENDPOINT`
+  (adres `https://formspree.io/f/<id>`, inne są ignorowane; na produkcji ustawiony w
+  [ansible/playbooks/config.yml](ansible/playbooks/config.yml), lokalnie celowo nie, żeby próby nie
+  wysyłały prawdziwych wiadomości). Działa też bez JavaScriptu (zwykły POST do Formspree), a
+  [public/contact-form.js](public/contact-form.js) wysyła wiadomość w tle i zostawia odwiedzającego
+  na stronie — bez skryptów zewnętrznych. Pole `_gotcha` to honeypot Formspree; dane trafiają do
+  Formspree, Inc. (USA), co opisuje polityka prywatności. Darmowy plan Formspree ma miesięczny limit
+  wiadomości, więc w panelu Formspree warto włączyć ochronę przed spamem (reCAPTCHA/Turnstile).
 - **Udostępnianie**: strona petycji, strona po wysłaniu formularza i strona potwierdzenia mają
   linki WhatsApp / Facebook / e-mail. To zwykłe linki — bez JavaScriptu i skryptów zewnętrznych.
 

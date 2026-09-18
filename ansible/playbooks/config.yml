@@ -11,6 +11,7 @@ apps:
       DB_PATH: /app/db/data.sqlite
       BASE_URL: "https://{{ domain | default('radzymin.mleczki.pl') }}"
       MAIL_FROM: radzymin.mleczki@gmail.com
+      CONTACT_FORM_ENDPOINT: https://formspree.io/f/xwlppzoj
     healthcheck_enabled: true
     ipv6: "{{ mikrus_ipv6 }}"
     cytrus_host: "{{ cytrus_host }}"

@@ -12,4 +12,6 @@ return [
     'contactEmail' => env('ORGANIZER_EMAIL', 'radzymin.mleczki@gmail.com'),
     // Optional; shown next to the e-mail on the home page when set.
     'phone' => env('ORGANIZER_PHONE'),
+    // Formspree form endpoint (https://formspree.io/f/<id>); the contact form is hidden when unset.
+    'contactFormEndpoint' => formspree_endpoint(env('CONTACT_FORM_ENDPOINT')),
 ];

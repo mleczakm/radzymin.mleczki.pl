@@ -4,7 +4,7 @@
  * @var string $title
  * @var string|null $description
  * @var bool $fullWidth
- * @var array{name: string, address: string, contactEmail: string, phone: string|null} $organizer
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null} $organizer
  */
 ?>
 <?php
