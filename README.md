@@ -195,7 +195,7 @@ danymi. Hash hasła w `.env` jest w pojedynczych cudzysłowach, bo inaczej `dock
 zinterpoluje znaki `$` i go zepsuje — zachowaj je, jeśli będziesz go zmieniać.
 
 - Aplikacja: http://localhost:8080
-- Mailpit (podgląd wysłanych e-maili zamiast prawdziwego Gmaila): http://localhost:8025
+- Mailpit (podgląd wysłanych e-maili zamiast prawdziwego Gmaila): http://localhost:8026
 
 Bez Dockera (wymaga lokalnie zainstalowanego `ext-swoole`):
 
