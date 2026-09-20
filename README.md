@@ -119,6 +119,33 @@ Wymagane: `slug`, `title`, `summary`, `status`. `status` to jedno z: `planned` (
   „Przebieg sprawy” na stronie szczegółów.
 - `updatedAt` — data ostatniej aktualizacji; domyślnie data ostatniego zrealizowanego kroku.
 
+**Terminowość odpowiedzi urzędu.** Krok może mieć `kind: submission` (złożenie wniosku, pisma) albo
+`kind: response` (odpowiedź instytucji na najbliższe wcześniejsze złożenie). Dla każdej odpowiedzi
+strona liczy termin od daty złożenia — domyślnie **14 dni**, inną liczbę dni (1–366) ustawiasz w kroku
+odpowiedzi polem `deadlineDays`, np. `30` po przedłużeniu terminu przez urząd. Dzień terminu liczy się
+jeszcze jako w terminie.
+
+```yaml
+steps:
+  - title: Złożenie wniosku
+    kind: submission
+    date: 2026-09-01
+    done: true
+  - title: Odpowiedź urzędu
+    kind: response
+    date: 2026-09-20      # 5 dni po terminie → czerwone oznaczenie „Odpowiedź po terminie”
+    done: true
+    # deadlineDays: 30    # opcjonalnie: inny termin niż 14 dni
+```
+
+Wynik pokazuje oś czasu: zielone „w terminie”, czerwone „po terminie” (z liczbą dni spóźnienia),
+żółte „oczekiwanie” (z liczbą dni do końca terminu) i czerwone „brak odpowiedzi w terminie”, gdy
+odpowiedzi nie ma, a termin minął. Sprawy z odpowiedzią po terminie mają też znacznik na liście na
+stronie głównej. Werdykt liczy się przy każdym wyświetleniu (odpowiedź „oczekująca” sama zmienia się w
+„brak odpowiedzi w terminie” po upływie terminu, bez nowego wdrożenia); dla spraw zakończonych
+i odrzuconych brak odpowiedzi nie jest oceniany. Odpowiedź bez wcześniejszego kroku `submission`
+albo datowana przed złożeniem zatrzymuje start z komunikatem błędu.
+
 Sprawy aktywne (w toku → oczekujące → planowane) są na górze, potem zakończone i odrzucone;
 w obrębie statusu — od najnowszej aktualizacji. Tak jak petycje, pliki są parsowane raz na
 proces workera przy starcie i trzymane w pamięci, więc **zmiana statusu wymaga nowego

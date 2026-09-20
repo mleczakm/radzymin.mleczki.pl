@@ -9,12 +9,22 @@ institution: "Przykładowa instytucja"
 updatedAt: 2026-09-10
 steps:
   - title: Przygotowanie wniosku
-    date: 2026-08-20
+    date: 2026-07-25
     done: true
   - title: Złożenie wniosku
-    date: 2026-09-01
+    kind: submission
+    date: 2026-08-01
     done: true
   - title: Odpowiedź instytucji
+    kind: response
+    date: 2026-08-20
+    done: true
+  - title: Ponowny wniosek o brakujące dane
+    kind: submission
+    date: 2026-09-01
+    done: true
+  - title: Odpowiedź na ponowny wniosek
+    kind: response
     done: false
   - title: Ewentualne odwołanie lub kolejne kroki
     done: false
@@ -22,6 +32,14 @@ steps:
 
 Miejsce na opis sprawy w formacie **Markdown**: czego dotyczy wniosek, do kogo został
 skierowany i jaki jest cel. Możesz tu wstawiać linki, listy i pogrubienia.
+
+## Terminowość odpowiedzi
+
+Krok z `kind: submission` to złożenie wniosku, a z `kind: response` — odpowiedź instytucji. Strona sama
+liczy, czy odpowiedź przyszła w terminie (domyślnie 14 dni od złożenia, zmienisz to polem
+`deadlineDays`), i oznacza spóźnione odpowiedzi na czerwono. Dotyczy to też odpowiedzi, na które wciąż
+czekasz, gdy termin już minął. W tym przykładzie pierwsza odpowiedź przyszła po terminie, a na drugą
+nadal czekamy.
 
 ## Dostępne statusy
 
