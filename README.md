@@ -124,6 +124,48 @@ w obrębie statusu — od najnowszej aktualizacji. Tak jak petycje, pliki są pa
 proces workera przy starcie i trzymane w pamięci, więc **zmiana statusu wymaga nowego
 wdrożenia** (tag), a nie tylko edycji pliku na serwerze.
 
+## Wykresy w treści
+
+W treści petycji, spraw i w `content/about.md` możesz wstawić wykres blokiem `chart` (YAML
+w bloku kodu). Wykres jest rysowany **na serwerze jako SVG** — przy starcie, razem z resztą
+Markdownu — więc działa bez JavaScriptu, nie wymaga żadnej biblioteki ani skryptu zewnętrznego,
+dziedziczy kolory strony i tryb ciemny.
+
+````markdown
+```chart
+type: bar
+stacked: true
+title: Wnioski o ukaranie za wjazd do strefy 12 t
+unit: wniosków
+caption: Liczba wniosków złożonych w danym miesiącu.
+source: rejestr wniosków
+labels: [Sty, Lut, Mar, Kwi]
+series:
+  - name: Uwzględnione
+    values: [1, 3, 5, 6]
+  - name: Odrzucone
+    values: [2, 3, 2, 2]
+```
+````
+
+| Pole | Opis |
+|---|---|
+| `title` | **wymagane** — tytuł widoczny nad wykresem i nazwa dostępna dla czytników ekranu |
+| `labels` | **wymagane** — etykiety kategorii (oś X), do 60; liczby jak `2024` są traktowane jako tekst |
+| `series` | **wymagane** — od 1 do 5 serii: `name` + `values` (tyle liczb ≥ 0, ile etykiet) |
+| `type` | `bar` (słupki, domyślnie) lub `line` (linie) |
+| `stacked` | `true` — słupki piętrowe (suma serii w jednym słupku); tylko dla `bar` |
+| `unit` | jednostka, pokazywana nad osią i w podpowiedziach |
+| `caption`, `source` | podpis pod wykresem i „Źródło: …” |
+
+Kilka serii dostaje legendę; linie różnią się też wzorem kreski, żeby wykres nie polegał wyłącznie
+na kolorze. Pod każdym wykresem jest zwijana tabela „Pokaż dane w tabeli” z dokładnymi liczbami
+(to jednocześnie tekstowy odpowiednik dla czytników ekranu). Etykiety dłuższe niż 18 znaków są
+skracane na osi (pełny tekst jest w podpowiedzi i w tabeli), a długie — pochylane. Błąd w bloku
+(brak tytułu, zła liczba wartości, ujemna wartość…) zatrzymuje start serwera z komunikatem
+zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład: `content/topics/przyklad-wniosek.md`
+(dane w nim są wymyślone).
+
 ## Architektura
 
 - **Serwer**: `Swoole\Http\Server` w trybie `SWOOLE_BASE`, workery HTTP + workery zadań
