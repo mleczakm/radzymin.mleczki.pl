@@ -24,6 +24,12 @@
   --color-warning: #6e5200;
   --color-warning-bg: #fff6cc;
 
+  --chart-0: #007bc2;
+  --chart-1: #d55e00;
+  --chart-2: #009e73;
+  --chart-3: #8a4fbf;
+  --chart-4: #6b7785;
+
   --radius: 14px;
   --shadow: 0 1px 2px rgba(0, 30, 60, 0.06), 0 6px 20px rgba(0, 30, 60, 0.07);
 }
@@ -465,6 +471,44 @@ code { background: var(--color-border); padding: 2px 5px; border-radius: 4px; }
   font-size: 0.85rem;
 }
 .recent-signatures-city { color: var(--color-muted); }
+
+/* ---- Charts (fenced `chart` blocks in content files, rendered to SVG on the server) ------ */
+.chart-s0 { --series: var(--chart-0); }
+.chart-s1 { --series: var(--chart-1); }
+.chart-s2 { --series: var(--chart-2); }
+.chart-s3 { --series: var(--chart-3); }
+.chart-s4 { --series: var(--chart-4); }
+
+.chart { margin: 28px 0; }
+.chart-title { margin: 0 0 8px; font-weight: 700; }
+.chart-svg { display: block; width: 100%; height: auto; }
+
+.chart-grid { stroke: var(--color-border); stroke-width: 1; }
+.chart-axis { stroke: var(--color-muted); }
+.chart-tick, .chart-label, .chart-unit { fill: var(--color-muted); font-size: 12px; }
+.chart-value { fill: var(--color-text); font-size: 12px; font-weight: 600; }
+
+.chart-bar { fill: var(--series); stroke: var(--color-bg); stroke-width: 1; }
+.chart-bar:hover { opacity: 0.85; }
+.chart-line { stroke: var(--series); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+/* Series differ by dash pattern as well as colour, so the chart doesn't rely on colour alone. */
+.chart-line.chart-s1 { stroke-dasharray: 8 5; }
+.chart-line.chart-s2 { stroke-dasharray: 1 6; }
+.chart-line.chart-s3 { stroke-dasharray: 12 4 2 4; }
+.chart-line.chart-s4 { stroke-dasharray: 3 3; }
+.chart-dot { fill: var(--series); stroke: var(--color-bg); stroke-width: 1.5; }
+
+.chart-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; padding: 0; font-size: 0.9rem; }
+.chart-swatch { display: inline-block; width: 12px; height: 12px; margin-right: 6px; border-radius: 3px; background: var(--series); vertical-align: -1px; }
+.chart-caption { margin-top: 8px; color: var(--color-muted); font-size: 0.85rem; }
+
+.chart-data { margin-top: 10px; overflow-x: auto; font-size: 0.9rem; }
+.chart-data summary { color: var(--color-link); }
+.chart-data table { border-collapse: collapse; margin-top: 8px; min-width: 100%; }
+.chart-data th, .chart-data td { border: 1px solid var(--color-border); padding: 5px 10px; }
+.chart-data td { text-align: right; font-variant-numeric: tabular-nums; }
+.chart-data thead th { background: var(--color-tint); }
+.chart-data tbody th { text-align: left; font-weight: 600; }
 
 /* ---- Footer ------------------------------------------------------------------------------- */
 .site-footer { background: var(--blue-deep); color: #cfe3f1; padding: 32px 0; font-size: 0.95rem; }
