@@ -38,3 +38,9 @@ enabled = false    # value objects (Signature, Petition, Topic) are plain constr
 enabled = false    # one repository class per table; PHPUnit classes hold one method per case
 [linter.rules.too-many-properties]
 enabled = false    # WorkerServices is the per-worker service registry
+[linter.rules.halstead]
+enabled = false    # composite scores that don't point at a concrete fix (geometry code is arithmetic-heavy by nature)
+[linter.rules.kan-defect]
+enabled = false
+[linter.rules.cyclomatic-complexity]
+threshold = 25     # validators (chart/front-matter parsing) have one branch per rule

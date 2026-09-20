@@ -13,10 +13,9 @@ final class AssetUrlTest extends TestCase
         $url = asset_url('style.css');
 
         self::assertMatchesRegularExpression('#^/style\.css\?v=\d+$#', $url);
-        self::assertSame(
-            '?v=' . filemtime(dirname(__DIR__) . '/public/style.css'),
-            substr($url, strlen('/style.css')),
-        );
+        $modified = filemtime(dirname(__DIR__) . '/public/style.css');
+        self::assertNotFalse($modified);
+        self::assertSame('?v=' . $modified, substr($url, strlen('/style.css')));
     }
 
     public function testLeadingSlashIsOptional(): void
