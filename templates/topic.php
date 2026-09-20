@@ -3,7 +3,10 @@
  * @var \App\Domain\Topic $topic
  */
 ?>
-<?php $percent = $topic->progressPercent(); ?>
+<?php
+$percent = $topic->progressPercent();
+$assessments = $topic->responseAssessments();
+?>
 <p><a href="/">&larr; Strona główna</a></p>
 
 <div class="topic-card-head">
@@ -32,8 +35,9 @@
 <?php if ($topic->steps !== []): ?>
   <h2>Przebieg sprawy</h2>
   <ol class="timeline">
-    <?php foreach ($topic->steps as $step): ?>
-      <li class="timeline-step<?= $step->done ? ' timeline-step-done' : '' ?>">
+    <?php foreach ($topic->steps as $index => $step): ?>
+      <?php $assessment = $assessments[$index] ?? null; ?>
+      <li class="timeline-step<?= $step->done ? ' timeline-step-done' : '' ?><?= $assessment !== null ? ' timeline-step-' . e($assessment->timing->value) : '' ?>">
         <span class="timeline-marker" aria-hidden="true"></span>
         <div>
           <p class="timeline-title">
@@ -42,6 +46,12 @@
           </p>
           <?php if ($step->date !== null): ?>
             <p class="timeline-date"><?= e(format_date($step->date)) ?></p>
+          <?php endif; ?>
+          <?php if ($assessment !== null): ?>
+            <p class="timing timing-<?= e($assessment->timing->value) ?>">
+              <strong class="timing-label"><?= e($assessment->label()) ?></strong>
+              <span><?= e($assessment->summary()) ?></span>
+            </p>
           <?php endif; ?>
         </div>
       </li>

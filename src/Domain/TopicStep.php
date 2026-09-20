@@ -13,6 +13,10 @@ final class TopicStep
         /** ISO date (Y-m-d); optional — for done steps the date it happened, for pending ones a planned date. */
         public readonly ?string $date = null,
         public readonly bool $done = false,
+        /** Filing or answer; lets the site check whether the institution answered within the deadline. */
+        public readonly StepKind $kind = StepKind::Other,
+        /** Days the institution has to answer, counted from the preceding submission (response steps only). */
+        public readonly int $deadlineDays = ResponseAssessment::DEFAULT_DEADLINE_DAYS,
     ) {
     }
 
@@ -28,7 +32,43 @@ final class TopicStep
             title: (string) $title,
             date: MarkdownLoader::normalizeDate($raw['date'] ?? null),
             done: ($raw['done'] ?? false) === true,
+            kind: self::parseKind($raw['kind'] ?? null, $file, $position),
+            deadlineDays: self::parseDeadlineDays($raw['deadlineDays'] ?? null, $file, $position),
         );
+    }
+
+    private static function parseKind(mixed $value, string $file, int $position): StepKind
+    {
+        if ($value === null) {
+            return StepKind::Other;
+        }
+
+        $kind = is_string($value) ? StepKind::tryFrom($value) : null;
+
+        return $kind ?? throw new \RuntimeException(sprintf(
+            'Topic file "%s": step #%d has invalid kind "%s" (allowed: %s).',
+            $file,
+            $position,
+            is_scalar($value) ? (string) $value : get_debug_type($value),
+            implode(', ', array_map(static fn (StepKind $kind): string => $kind->value, StepKind::cases())),
+        ));
+    }
+
+    private static function parseDeadlineDays(mixed $value, string $file, int $position): int
+    {
+        if ($value === null) {
+            return ResponseAssessment::DEFAULT_DEADLINE_DAYS;
+        }
+
+        if (!is_int($value) || $value < 1 || $value > 366) {
+            throw new \RuntimeException(sprintf(
+                'Topic file "%s": step #%d has invalid deadlineDays (expected a whole number of days from 1 to 366).',
+                $file,
+                $position,
+            ));
+        }
+
+        return $value;
     }
 
     /**

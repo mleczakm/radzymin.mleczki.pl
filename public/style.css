@@ -418,6 +418,30 @@ code { background: var(--color-border); padding: 2px 5px; border-radius: 4px; }
 .timeline-title { margin: 0; font-weight: 600; }
 .timeline-date { margin: 0; color: var(--color-muted); font-size: 0.85rem; }
 
+/* Answer deadline: colour is backed by the label text and a leading symbol, never colour alone. */
+.badge-late { background: var(--color-error-bg); color: var(--color-error); border-color: var(--color-error); }
+.timing {
+  margin: 6px 0 0;
+  padding: 6px 10px;
+  border-left: 4px solid var(--timing, var(--color-border));
+  border-radius: 0 6px 6px 0;
+  background: var(--timing-bg, var(--color-bg));
+  color: var(--timing-fg, var(--color-text));
+  font-size: 0.9rem;
+}
+.timing-label::before { content: var(--timing-icon, ""); margin-right: 6px; }
+.timing-label::after { content: ": "; font-weight: 400; }
+.timing-on_time { --timing: var(--color-success); --timing-bg: var(--color-success-bg); --timing-fg: var(--color-success); --timing-icon: "\2713"; }
+.timing-awaiting { --timing: var(--color-warning); --timing-bg: var(--color-warning-bg); --timing-fg: var(--color-warning); --timing-icon: "\23F3"; }
+.timing-late,
+.timing-overdue { --timing: var(--color-error); --timing-bg: var(--color-error-bg); --timing-fg: var(--color-error); --timing-icon: "\26A0"; }
+.timing-late .timing-label,
+.timing-overdue .timing-label { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.timeline-step-on_time .timeline-marker { background: var(--color-success); border-color: var(--color-success); }
+.timeline-step-awaiting .timeline-marker { border-color: var(--color-warning); }
+.timeline-step-late .timeline-marker,
+.timeline-step-overdue .timeline-marker { background: var(--color-error); border-color: var(--color-error); border-radius: 3px; transform: rotate(45deg); }
+
 /* ---- Confirmation page (after clicking the e-mail link) ----------------------------------- */
 .confirmed-page {
   background: var(--color-surface);

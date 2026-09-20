@@ -37,6 +37,34 @@ final class Topic
         return (int) floor($done / count($this->steps) * 100);
     }
 
+    /**
+     * Deadline verdicts for the institution's answers, keyed by index in $steps. Computed per call
+     * (not at boot) because a pending answer turns overdue as time passes.
+     *
+     * @return array<int, ResponseAssessment>
+     */
+    public function responseAssessments(?\DateTimeImmutable $today = null): array
+    {
+        $today ??= new \DateTimeImmutable('today', new \DateTimeZone('Europe/Warsaw'));
+        $open = $this->status !== TopicStatus::Completed && $this->status !== TopicStatus::Rejected;
+
+        return $open
+            ? ResponseAssessment::forSteps($this->steps, $today)
+            : ResponseAssessment::forAnsweredSteps($this->steps);
+    }
+
+    /** True when any answer came after its deadline, or is still missing past it. */
+    public function hasLateResponse(?\DateTimeImmutable $today = null): bool
+    {
+        foreach ($this->responseAssessments($today) as $assessment) {
+            if ($assessment->timing->isPastDeadline()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /** Display order: active matters first, then by last update (newest first), then by title. */
     public static function compare(self $a, self $b): int
     {

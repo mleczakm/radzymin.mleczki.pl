@@ -72,6 +72,8 @@ final class TopicRepository
             $steps[] = TopicStep::fromFrontMatter($rawStep, $file, $index + 1);
         }
 
+        ResponseAssessment::assertSequence($steps, $file);
+
         return $steps;
     }
 

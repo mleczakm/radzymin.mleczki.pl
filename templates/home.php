@@ -136,6 +136,9 @@ $formEndpoint = $organizer['contactFormEndpoint'];
             <div class="topic-card-head">
               <h3><a href="/sprawy/<?= e($topic->slug) ?>"><?= e($topic->title) ?></a></h3>
               <span class="badge badge-<?= e($topic->status->value) ?>"><?= e($topic->status->label()) ?></span>
+              <?php if ($topic->hasLateResponse()): ?>
+                <span class="badge badge-late">Odpowiedź po terminie</span>
+              <?php endif; ?>
             </div>
             <?php if ($topic->institution !== null): ?>
               <p class="topic-institution"><?= e($topic->institution) ?></p>
