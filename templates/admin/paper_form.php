@@ -11,7 +11,7 @@
 <p>Petycja: <strong><?= e($petition->title) ?></strong></p>
 
 <?php if ($added !== null): ?>
-  <p class="alert alert-success">Dodano <?= (int) $added ?> podpis(ów).</p>
+  <p class="alert alert-success"><?= e(plural((int) $added, 'Dodano %d podpis.', 'Dodano %d podpisy.', 'Dodano %d podpisów.')) ?></p>
 <?php endif; ?>
 
 <?php if ($skipped !== []): ?>

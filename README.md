@@ -231,6 +231,21 @@ zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład: `content/t
 To celowo *podstawowa* ochrona (bez zewnętrznych captchy typu reCAPTCHA/hCaptcha) — nie
 wymaga zewnętrznych usług i nie zbiera dodatkowych danych o odwiedzających.
 
+## Odmiana liczebników
+
+Liczby w szablonach odmieniamy przez `plural()` i `plural_form()` ([src/functions.php](src/functions.php)),
+które korzystają z reguły polskiej (jak w CLDR: 1 / 2–4 poza 12–14 / reszta), bez zewnętrznej
+biblioteki — reguła to kilka linii, a test porównuje ją z ICU dla liczb 0–2000:
+
+```php
+<?= e(plural($n, '%d sprawa w toku', '%d sprawy w toku', '%d spraw w toku')) ?>
+<?= e(plural_form($n, 'sprawa', 'sprawy', 'spraw')) ?>   <?php // sama forma, bez liczby ?>
+```
+
+Formy podajesz w kolejności: dla 1, dla 2–4 (np. 22, 103) i dla pozostałych (0, 5–21, 25…). Można w nich
+uwzględnić zgodny czasownik lub przymiotnik („pozostał / pozostały / pozostało”). Jednostki wpisywane
+w treści (`unit:` wykresu) nie są odmieniane — wpisz taką formę, która pasuje do liczb, np. „wniosków”.
+
 ## Panel administracyjny
 
 Dostępny pod `/admin`, chroniony HTTP Basic Auth (jedno konto, `ADMIN_USER` +

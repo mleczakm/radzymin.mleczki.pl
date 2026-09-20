@@ -156,6 +156,18 @@ final class ResponseAssessmentTest extends TestCase
             ResponseAssessment::forSteps([$submission, self::response(null, false)], self::today('2026-09-15'))[1]->summary(),
         );
         self::assertSame(
+            'termin na odpowiedź: 15.09.2026 — został 1 dzień',
+            ResponseAssessment::forSteps([$submission, self::response(null, false)], self::today('2026-09-14'))[1]->summary(),
+        );
+        self::assertSame(
+            'termin na odpowiedź: 15.09.2026 — zostały 3 dni',
+            ResponseAssessment::forSteps([$submission, self::response(null, false)], self::today('2026-09-12'))[1]->summary(),
+        );
+        self::assertSame(
+            'termin na odpowiedź: 15.09.2026 — zostało 9 dni',
+            ResponseAssessment::forSteps([$submission, self::response(null, false)], self::today('2026-09-06'))[1]->summary(),
+        );
+        self::assertSame(
             'termin minął 5 dni temu (15.09.2026)',
             ResponseAssessment::forSteps([$submission, self::response(null, false)], self::today('2026-09-20'))[1]->summary(),
         );

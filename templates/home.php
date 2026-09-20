@@ -36,10 +36,10 @@ $formEndpoint = $organizer['contactFormEndpoint'];
     <?php if ($totalSignatures > 0 || $activeTopicCount > 0): ?>
       <dl class="hero-stats">
         <?php if ($totalSignatures > 0): ?>
-          <div><dt>podpisów zebranych</dt><dd><?= (int) $totalSignatures ?></dd></div>
+          <div><dt><?= e(plural_form($totalSignatures, 'podpis zebrany', 'podpisy zebrane', 'podpisów zebranych')) ?></dt><dd><?= (int) $totalSignatures ?></dd></div>
         <?php endif; ?>
         <?php if ($activeTopicCount > 0): ?>
-          <div><dt>spraw w toku</dt><dd><?= (int) $activeTopicCount ?></dd></div>
+          <div><dt><?= e(plural_form($activeTopicCount, 'sprawa w toku', 'sprawy w toku', 'spraw w toku')) ?></dt><dd><?= (int) $activeTopicCount ?></dd></div>
         <?php endif; ?>
       </dl>
     <?php endif; ?>
@@ -73,11 +73,11 @@ $formEndpoint = $organizer['contactFormEndpoint'];
                   <div class="progress-bar-fill" style="width: <?= (int) $percent ?>%"></div>
                 </div>
                 <p class="card-progress-label">
-                  <strong><?= (int) $counts[$slug] ?></strong> z <?= (int) $petition->goal ?> podpisów (<?= (int) $percent ?>%)
+                  <strong><?= (int) $counts[$slug] ?></strong> z <?= e(plural((int) $petition->goal, '%d podpisu', '%d podpisów', '%d podpisów')) ?> (<?= (int) $percent ?>%)
                 </p>
               </div>
             <?php else: ?>
-              <p class="signature-count"><strong><?= (int) $counts[$slug] ?></strong> potwierdzonych podpisów</p>
+              <p class="signature-count"><strong><?= (int) $counts[$slug] ?></strong> <?= e(plural_form($counts[$slug], 'potwierdzony podpis', 'potwierdzone podpisy', 'potwierdzonych podpisów')) ?></p>
             <?php endif; ?>
 
             <a class="button button-accent" href="/petycja/<?= e($slug) ?>">Przeczytaj i podpisz</a>

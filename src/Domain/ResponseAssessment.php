@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
+use App\Text\PolishPlural;
+
 /**
  * Whether an institution's answer came within the deadline counted from the filing date.
  * Dates are calendar days: an answer on the last day of the deadline is still on time.
@@ -141,7 +143,7 @@ final class ResponseAssessment
             ResponseTiming::Late => sprintf('%s po upływie terminu (%s)', self::days($this->days), $deadline),
             ResponseTiming::Awaiting => $this->days === 0
                 ? sprintf('termin na odpowiedź upływa dziś (%s)', $deadline)
-                : sprintf('termin na odpowiedź: %s — zostało %s', $deadline, self::days($this->days)),
+                : sprintf('termin na odpowiedź: %s — %s', $deadline, PolishPlural::form($this->days, 'został', 'zostały', 'zostało') . ' ' . self::days($this->days)),
             ResponseTiming::Overdue => sprintf('termin minął %s temu (%s)', self::days($this->days), $deadline),
         };
     }
@@ -159,7 +161,7 @@ final class ResponseAssessment
 
     private static function days(int $count): string
     {
-        return $count === 1 ? '1 dzień' : $count . ' dni';
+        return $count . ' ' . PolishPlural::form($count, 'dzień', 'dni', 'dni');
     }
 
     /** Midnight UTC, so day arithmetic is not affected by daylight-saving changes. */

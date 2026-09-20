@@ -10,6 +10,25 @@ if (!function_exists('e')) {
     }
 }
 
+if (!function_exists('plural_form')) {
+    /**
+     * Noun form for a count in Polish: plural_form(2, 'sprawa', 'sprawy', 'spraw') is "sprawy".
+     * Forms may include the agreeing verb or adjective too ("pozostał", "pozostały", "pozostało").
+     */
+    function plural_form(int $count, string $one, string $few, string $many): string
+    {
+        return App\Text\PolishPlural::form($count, $one, $few, $many);
+    }
+}
+
+if (!function_exists('plural')) {
+    /** Like plural_form() but with the number itself in place of each "%d": plural(2, '%d sprawa', '%d sprawy', '%d spraw'). */
+    function plural(int $count, string $one, string $few, string $many): string
+    {
+        return str_replace('%d', (string) $count, App\Text\PolishPlural::form($count, $one, $few, $many));
+    }
+}
+
 if (!function_exists('format_date')) {
     /** Formats an ISO date (Y-m-d) as dd.mm.yyyy for display; empty string for null/empty input. */
     function format_date(?string $isoDate): string
