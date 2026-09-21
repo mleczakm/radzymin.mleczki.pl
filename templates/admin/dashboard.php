@@ -25,7 +25,7 @@
           &middot;
           <a href="/admin/petycje/<?= e($row['petition']->slug) ?>/papier">Dopisz z listy papierowej</a>
           &middot;
-          <a href="/petycja/<?= e($row['petition']->slug) ?>/lista.pdf">Pusta lista PDF</a>
+          <a href="/petycja/<?= e($row['petition']->slug) ?>/lista">Pusta lista do druku</a>
         </td>
       </tr>
     <?php endforeach; ?>

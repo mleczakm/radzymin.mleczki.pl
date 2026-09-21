@@ -103,9 +103,9 @@ $formEndpoint = $organizer['contactFormEndpoint'];
         <span class="step-number" aria-hidden="true">2</span>
         <h3>Zbierz podpisy</h3>
         <p>
-          Pobierz listę do druku (PDF) i zbierz podpisy wśród sąsiadów i znajomych.
+          Wydrukuj listę i zbierz podpisy wśród sąsiadów i znajomych.
           <?php if ($featured !== null): ?>
-            <a href="/petycja/<?= e($featured->slug) ?>/lista.pdf">Pobierz listę</a>.
+            <a href="/petycja/<?= e($featured->slug) ?>/lista">Otwórz listę do druku</a>.
           <?php endif; ?>
         </p>
       </li>

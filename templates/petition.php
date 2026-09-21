@@ -29,7 +29,7 @@
   ]) ?>
   <p>
     Zbierasz podpisy wśród sąsiadów?
-    <a href="/petycja/<?= e($petition->slug) ?>/lista.pdf">Pobierz listę do druku (PDF)</a>
+    <a href="/petycja/<?= e($petition->slug) ?>/lista">Wydrukuj listę podpisów</a>
     i przekaż mi wypełnioną — dopiszę podpisy do wyniku.
   </p>
 </div>

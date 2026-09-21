@@ -267,10 +267,13 @@ Panel pozwala:
 
 ## Lista do zbierania podpisów papierowo
 
-`GET /petycja/{slug}/lista.pdf` generuje (przez [dompdf](https://github.com/dompdf/dompdf))
-gotowy do druku arkusz A4: tytuł petycji, krótka klauzula RODO i tabela
-`Lp. / Imię i nazwisko / Miejscowość / Podpis`. Po zebraniu podpisów przepisz je do panelu
-administracyjnego (patrz wyżej), żeby doliczyć je do wyniku.
+`GET /petycja/{slug}/lista` pokazuje zwykłą stronę HTML przygotowaną do druku na papierze A4
+([templates/print/lista.php](templates/print/lista.php), style w [public/print.css](public/print.css)):
+tytuł petycji, krótka klauzula RODO i tabela `Lp. / Imię i nazwisko / Miejscowość / Podpis`
+(22 wiersze, nagłówek tabeli powtarza się, gdyby lista zajęła więcej stron). Drukuje przeglądarka
+(przycisk „Drukuj” albo Ctrl/Cmd + P), więc serwer nie generuje plików PDF i nie potrzebuje do tego
+żadnej biblioteki. Po zebraniu podpisów przepisz je do panelu administracyjnego (patrz wyżej),
+żeby doliczyć je do wyniku.
 
 ## Rozwój lokalny
 

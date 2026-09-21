@@ -10,7 +10,7 @@ use App\Action\Admin\PaperSignatureStoreAction;
 use App\Action\ConfirmAction;
 use App\Action\HealthAction;
 use App\Action\HomeAction;
-use App\Action\PetitionPdfAction;
+use App\Action\PetitionPrintAction;
 use App\Action\PetitionShowAction;
 use App\Action\PetitionSignAction;
 use App\Action\PrivacyAction;
@@ -53,7 +53,7 @@ $router->get('/polityka-prywatnosci', new PrivacyAction($view));
 $router->get('/sprawy/{slug}', new TopicShowAction($services, $view));
 $router->get('/petycja/{slug}', new PetitionShowAction($services, $view));
 $router->post('/petycja/{slug}/podpisz', new PetitionSignAction($server, $services, $view, $validator));
-$router->get('/petycja/{slug}/lista.pdf', new PetitionPdfAction($services, $view));
+$router->get('/petycja/{slug}/lista', new PetitionPrintAction($services, $view));
 $router->get('/potwierdz/{token}', new ConfirmAction($services, $view));
 
 $router->get('/admin', new DashboardAction($services, $view));
