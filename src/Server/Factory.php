@@ -8,10 +8,10 @@ use Swoole\Http\Server;
 
 final class Factory
 {
-    public static function create(string $environment): Server
+    public static function create(): Server
     {
-        $isDev = $environment === 'dev';
-        $server = new Server('0.0.0.0', $isDev ? 8080 : 80, SWOOLE_BASE);
+        // Same port in dev and prod: the deploy role publishes container port 8080 (like cargo.mleczki.pl).
+        $server = new Server('0.0.0.0', 8080, SWOOLE_BASE);
 
         $server->set([
             'worker_num' => (int) env('WORKER_NUM', '2'),

@@ -29,7 +29,7 @@ require __DIR__ . '/../config/bootstrap.php';
 $environment = env('APP_ENV', 'prod');
 ProductionGuard::assertSafe($environment, env('APP_SECRET', ''), env('ADMIN_PASSWORD_HASH', ''));
 
-$server = Factory::create($environment);
+$server = Factory::create();
 
 // Shared-memory table must be created before the server forks its workers.
 $rateLimitTable = RateLimiter::createTable();

@@ -43,9 +43,9 @@ RUN mkdir -p /app/db && chown -R app:app /app/db
 
 USER app
 ENV APP_ENV=prod
-EXPOSE 80
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:80/zdrowie || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/zdrowie || exit 1
 
 CMD ["php", "bin/server"]
