@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Action;
 
+use App\Domain\Petition;
 use App\Runtime\WorkerServices;
 use App\View\Renderer;
 use Dompdf\Dompdf;
@@ -14,6 +15,15 @@ use Swoole\Http\Response;
 /** Generates a blank, printable A4 signature sheet for offline (paper) collection of a petition's signatures. */
 final class PetitionPdfAction
 {
+    /**
+     * Rendered sheets by petition slug. Dompdf takes ~2 s of CPU and tens of MB per document, and
+     * the sheet is blank (identical for every visitor), so each worker renders it once and keeps
+     * the ~25 KB result instead of blocking on every download.
+     *
+     * @var array<string, string>
+     */
+    private array $sheets = [];
+
     public function __construct(private readonly WorkerServices $services, private readonly Renderer $view)
     {
     }
@@ -30,6 +40,13 @@ final class PetitionPdfAction
             return;
         }
 
+        $response->header('Content-Type', 'application/pdf');
+        $response->header('Content-Disposition', 'attachment; filename="lista-podpisow-' . $petition->slug . '.pdf"');
+        $response->end($this->sheets[$petition->slug] ??= $this->render($petition));
+    }
+
+    private function render(Petition $petition): string
+    {
         $html = $this->view->render('pdf/lista', [
             'petition' => $petition,
             'rows' => 28,
@@ -44,8 +61,6 @@ final class PetitionPdfAction
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        $response->header('Content-Type', 'application/pdf');
-        $response->header('Content-Disposition', 'attachment; filename="lista-podpisow-' . $petition->slug . '.pdf"');
-        $response->end($dompdf->output());
+        return $dompdf->output();
     }
 }
