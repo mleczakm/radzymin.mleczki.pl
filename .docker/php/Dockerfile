@@ -37,6 +37,7 @@ FROM php-base AS prod
 
 RUN addgroup -g 1000 app && adduser -D -u 1000 -G app app
 
+COPY .docker/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
 COPY --from=build /app /app
 # /app/db is the named volume mount point used by the shared ansible app_deploy role.
 RUN mkdir -p /app/db && chown -R app:app /app/db

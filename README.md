@@ -255,7 +255,7 @@ Zmierzone na obrazie produkcyjnym (cgroup kontenera, po rozgrzewce: strony, zapi
 
 | Konfiguracja | RAM |
 |---|---|
-| domyślna: 1 worker, mail w korutynie, tabela limitera 4096 wierszy | **ok. 17–20 MiB** |
+| domyślna: 1 worker, mail w korutynie, tabela limitera 4096 wierszy, OPcache | **ok. 20 MiB** (bez OPcache ok. 17 MiB) |
 | wcześniej: 2 workery + 2 workery zadań, tabela 65 536 wierszy | ok. 44 MiB |
 
 Skąd wzięło się 44 MiB: tabela limitera (`Swoole\Table` jest alokowana i zerowana w całości przy
@@ -266,15 +266,17 @@ to sama aplikacja (treści, kontener usług, klasy Symfony/CommonMark).
 Pokrętła: `WORKER_NUM` (domyślnie 1; zwiększ tylko na wielordzeniowym hoście z dużym ruchem) oraz
 rozmiar tabeli w `RateLimiter::createTable()` (wiersz na klienta wysyłającego formularz w ciągu godziny).
 
-Sprawdzone i **niewłączone** (wyniki dla tej aplikacji, 1 worker):
+OPcache w CLI jest włączony w obrazie produkcyjnym ([.docker/php/opcache.ini](.docker/php/opcache.ini)):
+szablony to pliki PHP wczytywane przy każdym żądaniu, więc bez niego byłyby kompilowane za każdym razem.
+Koszt to ok. 3 MiB (cały skompilowany kod strony to ok. 3,2 MiB w 116 skryptach, więc 8 MiB cache'u
+ma zapas), zysk to ok. +30–65% żądań na sekundę (ok. 5 tys./s dla strony głównej). W obrazie
+deweloperskim OPcache jest wyłączony, żeby zmiany w szablonach były widoczne bez restartu. Ponieważ
+obraz jest niezmienny, `opcache.validate_timestamps=0`: nowy kod trafia na serwer tylko z nowym
+wdrożeniem. JIT jest wyłączony celowo: nie przyspiesza kodu, który głównie składa HTML, a dokłada kilka MiB
+(podobnie duże wartości z typowych poradników, np. 256 MB OPcache i 128 MB bufora JIT).
 
-- **OPcache w CLI** (`-d opcache.enable_cli=1 -d opcache.memory_consumption=8
-  -d opcache.interned_strings_buffer=1 -d opcache.validate_timestamps=0`): ok. +1 MiB RAM za
-  ok. +65% przepustowości (szablony to pliki PHP wczytywane przy każdym żądaniu). Domyślnie wyłączone,
-  bo ruch tej strony jest o rzędy wielkości poniżej możliwości serwera (ok. 3–4 tys. żądań/s bez OPcache),
-  a celem jest niski RAM. Duże wartości z typowych poradników (256 MB OPcache, 128 MB bufora JIT)
-  dokładają kilka MiB i nic nie dają: JIT nie przyspiesza kodu, który głównie składa HTML.
-- `swoole.enable_library=0`, usunięcie `intl` z obrazu: brak mierzalnej różnicy pod obciążeniem.
+Sprawdzone i **niewłączone**: `swoole.enable_library=0` oraz usunięcie `intl` z obrazu — brak
+mierzalnej różnicy pod obciążeniem.
 
 Wysyłka maila działa w korutynie (hooki Swoole), więc zawieszony serwer SMTP nie blokuje strony:
 przy serwerze, który przyjmuje połączenie i milczy, `POST` odpowiada w ok. 25 ms, a inne
