@@ -16,12 +16,12 @@ use App\Action\PetitionSignAction;
 use App\Action\PrivacyAction;
 use App\Action\TopicShowAction;
 use App\Http\Router;
+use App\Mail\ConfirmationEmailSender;
 use App\Runtime\WorkerServices;
 use App\Security\ProductionGuard;
 use App\Security\RateLimiter;
 use App\Security\SignatureFormValidator;
 use App\Server\Factory;
-use App\Task\Handler as TaskHandler;
 use App\View\Renderer;
 
 require __DIR__ . '/../config/bootstrap.php';
@@ -52,7 +52,7 @@ $router->get('/zdrowie', new HealthAction());
 $router->get('/polityka-prywatnosci', new PrivacyAction($view));
 $router->get('/sprawy/{slug}', new TopicShowAction($services, $view));
 $router->get('/petycja/{slug}', new PetitionShowAction($services, $view));
-$router->post('/petycja/{slug}/podpisz', new PetitionSignAction($server, $services, $view, $validator));
+$router->post('/petycja/{slug}/podpisz', new PetitionSignAction(new ConfirmationEmailSender($services), $services, $view, $validator));
 $router->get('/petycja/{slug}/lista', new PetitionPrintAction($services, $view));
 $router->get('/potwierdz/{token}', new ConfirmAction($services, $view));
 
@@ -63,14 +63,6 @@ $router->post('/admin/petycje/{slug}/papier', new PaperSignatureStoreAction($ser
 
 $server->on('Request', function ($request, $response) use ($router): void {
     $router->dispatch($request, $response);
-});
-
-$taskHandler = new TaskHandler($services);
-$server->on('Task', function ($server, $task) use ($taskHandler): void {
-    $taskHandler->handle($server, $task);
-});
-$server->on('Finish', function (): void {
-    // No-op: task results aren't consumed by the HTTP worker.
 });
 
 $server->start();

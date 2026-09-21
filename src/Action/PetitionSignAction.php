@@ -7,20 +7,20 @@ namespace App\Action;
 use App\Domain\DuplicateSignatureException;
 use App\Http\RequestInput;
 use App\Http\Responder;
+use App\Mail\ConfirmationEmailSender;
 use App\Runtime\WorkerServices;
 use App\Security\Honeypot;
 use App\Security\SignatureFormValidator;
-use App\Task\SendConfirmationEmailTask;
 use App\View\PetitionFormView;
 use App\View\Renderer;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\Http\Server;
+use Swoole\Coroutine;
 
 final class PetitionSignAction
 {
     public function __construct(
-        private readonly Server $server,
+        private readonly ConfirmationEmailSender $mailSender,
         private readonly WorkerServices $services,
         private readonly Renderer $view,
         private readonly SignatureFormValidator $validator,
@@ -105,7 +105,8 @@ final class PetitionSignAction
             return;
         }
 
-        $this->server->task(new SendConfirmationEmailTask($signature->id));
+        // Slow SMTP I/O runs in its own coroutine, so the visitor gets the thank-you page right away.
+        Coroutine::create(fn () => $this->mailSender->send($signature->id));
 
         Responder::html($response, $this->view->renderPage('thank_you', ['petition' => $petition]));
     }

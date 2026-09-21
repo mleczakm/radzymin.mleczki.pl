@@ -2,29 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Mail;
 
 use App\Runtime\WorkerServices;
-use Swoole\Http\Server;
-use Swoole\Server\Task;
 
-/** Runs in task worker processes; keeps slow SMTP I/O off the HTTP request/response path. */
-final class Handler
+/**
+ * Sends the double opt-in e-mail for a stored signature. Meant to run in its own coroutine
+ * (see PetitionSignAction): Swoole's runtime hooks make the SMTP socket I/O yield instead of
+ * block, so a slow mail server never holds up other requests — and no extra task worker
+ * processes are needed. Failures are logged, never thrown into the request.
+ */
+final class ConfirmationEmailSender
 {
     public function __construct(private readonly WorkerServices $services)
     {
     }
 
-    public function handle(Server $server, Task $task): void
+    public function send(int $signatureId): void
     {
-        $data = $task->data;
-
-        if (!$data instanceof SendConfirmationEmailTask) {
-            return;
-        }
-
         try {
-            $signature = $this->services->signatures->findById($data->signatureId);
+            $signature = $this->services->signatures->findById($signatureId);
             $petition = $this->services->petitions->find($signature->petitionSlug);
 
             if ($petition === null) {
