@@ -195,15 +195,18 @@ zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład: `content/t
 
 ## Architektura
 
-- **Serwer**: `Swoole\Http\Server` w trybie `SWOOLE_BASE`, workery HTTP + workery zadań
-  (`task_worker_num`) — wysyłka e-maili potwierdzających idzie przez task workera, żeby
-  wolne SMTP nie blokowało obsługi requestów.
+- **Serwer**: `Swoole\Http\Server` w trybie `SWOOLE_BASE` z jednym workerem (`WORKER_NUM`,
+  domyślnie 1) — korutyny obsługują wiele żądań naraz, a każdy dodatkowy proces to ok. 8 MB RAM.
+  Wysyłka e-maili potwierdzających idzie w osobnej korutynie tego samego workera (hooki Swoole
+  sprawiają, że gniazdo SMTP nie blokuje pętli zdarzeń), więc nie ma workerów zadań.
+  Więcej workerów ma sens dopiero na wielordzeniowym hoście z dużym ruchem.
 - **Baza danych**: SQLite (plik) przez PDO. Jedna tabela `signatures` z unikalnym
   indeksem `(petition_slug, email)` — uniemożliwia podwójny podpis tym samym e-mailem pod
   tą samą petycją. Połączenie PDO tworzone jest leniwie, dopiero w `onWorkerStart` (po forku
   procesu workera), bo uchwytów SQLite nie wolno dzielić między procesami.
-- **Limiter żądań**: `Swoole\Table` w pamięci współdzielonej — liczniki per IP widoczne dla
-  wszystkich workerów bez blokad.
+- **Limiter żądań**: `Swoole\Table` w pamięci współdzielonej (4096 wierszy, ok. 0,5 MB;
+  tabela jest alokowana w całości przy starcie) — liczniki per IP widoczne dla wszystkich
+  workerów bez blokad. Wygasłe wpisy są usuwane, zanim tabela się zapełni.
 - **Szablony**: proste pliki PHP (`templates/`), bez silnika szablonów — wyjście zawsze
   przez `e()` (`htmlspecialchars`).
 - **Poczta**: `symfony/mailer`, transport SMTP wskazany przez `MAILER_DSN`
@@ -214,7 +217,7 @@ zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład: `content/t
 1. `GET /petycja/{slug}` — formularz z ukrytym polem-pułapką (honeypot) i podpisanym
    znacznikiem czasu.
 2. `POST /petycja/{slug}/podpisz` — walidacja + zabezpieczenia przed botami (patrz niżej),
-   zapis rekordu `pending` w SQLite, zlecenie wysyłki e-maila do task workera.
+   zapis rekordu `pending` w SQLite, wysyłka e-maila w osobnej korutynie.
 3. Osoba klika link w e-mailu → `GET /potwierdz/{token}` → status zmienia się na `confirmed`
    (dopiero wtedy podpis liczy się do wyniku publicznego).
 
@@ -245,6 +248,37 @@ biblioteki — reguła to kilka linii, a test porównuje ją z ICU dla liczb 0�
 Formy podajesz w kolejności: dla 1, dla 2–4 (np. 22, 103) i dla pozostałych (0, 5–21, 25…). Można w nich
 uwzględnić zgodny czasownik lub przymiotnik („pozostał / pozostały / pozostało”). Jednostki wpisywane
 w treści (`unit:` wykresu) nie są odmieniane — wpisz taką formę, która pasuje do liczb, np. „wniosków”.
+
+## Zużycie zasobów
+
+Zmierzone na obrazie produkcyjnym (cgroup kontenera, po rozgrzewce: strony, zapis, wysyłka maila):
+
+| Konfiguracja | RAM |
+|---|---|
+| domyślna: 1 worker, mail w korutynie, tabela limitera 4096 wierszy | **ok. 17–20 MiB** |
+| wcześniej: 2 workery + 2 workery zadań, tabela 65 536 wierszy | ok. 44 MiB |
+
+Skąd wzięło się 44 MiB: tabela limitera (`Swoole\Table` jest alokowana i zerowana w całości przy
+starcie) ok. 8,6 MiB, każdy dodatkowy proces ok. 8 MiB (sam PHP z rozszerzeniami ma ok. 7 MiB
+podłogi, Swoole dokłada ok. 3 MiB), a workerów było pięć procesów zamiast jednego. Pozostałe ok. 2,5 MiB
+to sama aplikacja (treści, kontener usług, klasy Symfony/CommonMark).
+
+Pokrętła: `WORKER_NUM` (domyślnie 1; zwiększ tylko na wielordzeniowym hoście z dużym ruchem) oraz
+rozmiar tabeli w `RateLimiter::createTable()` (wiersz na klienta wysyłającego formularz w ciągu godziny).
+
+Sprawdzone i **niewłączone** (wyniki dla tej aplikacji, 1 worker):
+
+- **OPcache w CLI** (`-d opcache.enable_cli=1 -d opcache.memory_consumption=8
+  -d opcache.interned_strings_buffer=1 -d opcache.validate_timestamps=0`): ok. +1 MiB RAM za
+  ok. +65% przepustowości (szablony to pliki PHP wczytywane przy każdym żądaniu). Domyślnie wyłączone,
+  bo ruch tej strony jest o rzędy wielkości poniżej możliwości serwera (ok. 3–4 tys. żądań/s bez OPcache),
+  a celem jest niski RAM. Duże wartości z typowych poradników (256 MB OPcache, 128 MB bufora JIT)
+  dokładają kilka MiB i nic nie dają: JIT nie przyspiesza kodu, który głównie składa HTML.
+- `swoole.enable_library=0`, usunięcie `intl` z obrazu: brak mierzalnej różnicy pod obciążeniem.
+
+Wysyłka maila działa w korutynie (hooki Swoole), więc zawieszony serwer SMTP nie blokuje strony:
+przy serwerze, który przyjmuje połączenie i milczy, `POST` odpowiada w ok. 25 ms, a inne
+żądania w kilka ms.
 
 ## Panel administracyjny
 
