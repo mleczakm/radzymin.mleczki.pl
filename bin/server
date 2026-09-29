@@ -3,6 +3,7 @@
 
 declare(strict_types=1);
 
+use App\Action\Admin\AnonymizeAction;
 use App\Action\Admin\DashboardAction;
 use App\Action\Admin\ExportCsvAction;
 use App\Action\Admin\PaperSignatureFormAction;
@@ -57,6 +58,7 @@ $router->get('/petycja/{slug}/lista', new PetitionPrintAction($services, $view))
 $router->get('/potwierdz/{token}', new ConfirmAction($services, $view));
 
 $router->get('/admin', new DashboardAction($services, $view));
+$router->get('/admin/anonimizacja', new AnonymizeAction($services, $view));
 $router->get('/admin/petycje/{slug}/eksport.csv', new ExportCsvAction($services));
 $router->get('/admin/petycje/{slug}/papier', new PaperSignatureFormAction($services, $view));
 $router->post('/admin/petycje/{slug}/papier', new PaperSignatureStoreAction($services, $view));

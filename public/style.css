@@ -540,3 +540,16 @@ code { background: var(--color-border); padding: 2px 5px; border-radius: 4px; }
 .site-footer a { color: #fff; }
 .site-footer .disclaimer { color: #a9c3d6; }
 .site-footer :focus-visible { outline-color: #fff; }
+
+/* Admin: anonimizacja dokumentów */
+.anon-note { background: var(--color-warning-bg); color: var(--color-warning); padding: 12px 14px; border-radius: 6px; }
+.anon-section { margin: 28px 0; }
+.anon-wide { width: 100%; box-sizing: border-box; font: inherit; padding: 8px; }
+.button-secondary { background: var(--color-tint); color: var(--color-link); border: 1px solid var(--color-border); }
+.button-secondary:hover { background: var(--color-border); }
+.anon-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.anon-stage { position: relative; display: inline-block; max-width: 100%; border: 1px solid var(--color-border); cursor: crosshair; touch-action: none; user-select: none; }
+.anon-stage canvas { display: block; max-width: 100%; height: auto; }
+.anon-box { position: absolute; background: rgba(0, 0, 0, 0.55); outline: 2px solid #c00; cursor: pointer; }
+.anon-box-manual { outline-color: #06c; }
+.anon-box-draft { background: rgba(0, 102, 204, 0.3); outline: 2px dashed #06c; pointer-events: none; }

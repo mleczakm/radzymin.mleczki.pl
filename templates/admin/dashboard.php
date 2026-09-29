@@ -5,6 +5,8 @@
 ?>
 <h1>Panel administracyjny</h1>
 
+<p><a href="/admin/anonimizacja">Anonimizacja dokumentów (tekst i PDF)</a> — działa w przeglądarce, nic nie jest wysyłane na serwer.</p>
+
 <table class="admin-table">
   <thead>
     <tr>
