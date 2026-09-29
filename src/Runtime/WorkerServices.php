@@ -17,6 +17,7 @@ use App\Storage\Database;
 use App\Storage\SignatureRepository;
 use PDO;
 use Psr\Log\LoggerInterface;
+use Swoole\Coroutine\Lock;
 use Swoole\Table;
 
 /**
@@ -54,7 +55,9 @@ final class WorkerServices
         $this->petitions = new PetitionRepository(dirname(__DIR__, 2) . '/content/petitions');
         $this->topics = new TopicRepository(dirname(__DIR__, 2) . '/content/topics');
         $this->about = self::loadAbout(dirname(__DIR__, 2) . '/content/about.md');
-        $this->signatures = new SignatureRepository($this->pdo);
+        // PDO is shared by this worker's request coroutines. Protect whole repository
+        // operations because PDO SQLite's Swoole hook can yield while executing SQL.
+        $this->signatures = new SignatureRepository($this->pdo, new Lock());
         $this->logger = \App\Log\Factory::create(filter_var(env('APP_DEBUG', '0'), FILTER_VALIDATE_BOOLEAN));
         $this->timingToken = new FormTimingToken($appSecret);
         $this->ipHasher = new IpHasher($appSecret);

@@ -10,10 +10,11 @@ use DateTimeImmutable;
 use PDO;
 use PDOException;
 use PDOStatement;
+use Swoole\Coroutine\Lock;
 
 final class SignatureRepository
 {
-    public function __construct(private readonly PDO $pdo)
+    public function __construct(private readonly PDO $pdo, private readonly ?Lock $lock = null)
     {
     }
 
@@ -26,91 +27,98 @@ final class SignatureRepository
         string $email,
         string $ipHash,
     ): Signature {
-        $emailNormalized = mb_strtolower(trim($email));
+        return $this->synchronized(function () use ($petitionSlug, $firstName, $lastName, $city, $email, $ipHash): Signature {
+            $emailNormalized = mb_strtolower(trim($email));
 
-        try {
-            $this->run(<<<'SQL'
-                INSERT INTO signatures
-                    (petition_slug, first_name, last_name, city, email, email_normalized, token, status, source, ip_hash, created_at)
-                VALUES
-                    (:slug, :first_name, :last_name, :city, :email, :email_normalized, :token, 'pending', 'online', :ip_hash, :created_at)
-                SQL, [
-                ':slug' => $petitionSlug,
-                ':first_name' => $firstName,
-                ':last_name' => $lastName,
-                ':city' => $city,
-                ':email' => $email,
-                ':email_normalized' => $emailNormalized,
-                ':token' => bin2hex(random_bytes(32)),
-                ':ip_hash' => $ipHash,
-                ':created_at' => self::now(),
-            ]);
-        } catch (PDOException $e) {
-            if (str_contains($e->getMessage(), 'UNIQUE constraint failed')) {
-                throw new DuplicateSignatureException($petitionSlug, $emailNormalized);
+            try {
+                $this->run(<<<'SQL'
+                    INSERT INTO signatures
+                        (petition_slug, first_name, last_name, city, email, email_normalized, token, status, source, ip_hash, created_at)
+                    VALUES
+                        (:slug, :first_name, :last_name, :city, :email, :email_normalized, :token, 'pending', 'online', :ip_hash, :created_at)
+                    SQL, [
+                    ':slug' => $petitionSlug,
+                    ':first_name' => $firstName,
+                    ':last_name' => $lastName,
+                    ':city' => $city,
+                    ':email' => $email,
+                    ':email_normalized' => $emailNormalized,
+                    ':token' => bin2hex(random_bytes(32)),
+                    ':ip_hash' => $ipHash,
+                    ':created_at' => self::now(),
+                ]);
+            } catch (PDOException $e) {
+                if (str_contains($e->getMessage(), 'UNIQUE constraint failed')) {
+                    throw new DuplicateSignatureException($petitionSlug, $emailNormalized);
+                }
+
+                throw $e;
             }
 
-            throw $e;
-        }
-
-        return $this->findById((int) $this->pdo->lastInsertId());
+            return $this->findByIdUnlocked((int) $this->pdo->lastInsertId());
+        });
     }
 
     /** Inserts an already-confirmed signature transcribed from a paper list by the admin. */
     public function createPaper(string $petitionSlug, string $firstName, string $lastName, string $city): Signature
     {
-        $this->run(<<<'SQL'
-            INSERT INTO signatures
-                (petition_slug, first_name, last_name, city, status, source, created_at, confirmed_at)
-            VALUES
-                (:slug, :first_name, :last_name, :city, 'confirmed', 'paper', :created_at, :created_at)
-            SQL, [
-            ':slug' => $petitionSlug,
-            ':first_name' => $firstName,
-            ':last_name' => $lastName,
-            ':city' => $city,
-            ':created_at' => self::now(),
-        ]);
+        return $this->synchronized(function () use ($petitionSlug, $firstName, $lastName, $city): Signature {
+            $this->run(<<<'SQL'
+                INSERT INTO signatures
+                    (petition_slug, first_name, last_name, city, status, source, created_at, confirmed_at)
+                VALUES
+                    (:slug, :first_name, :last_name, :city, 'confirmed', 'paper', :created_at, :created_at)
+                SQL, [
+                ':slug' => $petitionSlug,
+                ':first_name' => $firstName,
+                ':last_name' => $lastName,
+                ':city' => $city,
+                ':created_at' => self::now(),
+            ]);
 
-        return $this->findById((int) $this->pdo->lastInsertId());
+            return $this->findByIdUnlocked((int) $this->pdo->lastInsertId());
+        });
     }
 
     public function findById(int $id): Signature
     {
-        return $this->fetchOne($this->run('SELECT * FROM signatures WHERE id = :id', [':id' => $id]))
-            ?? throw new \RuntimeException("Signature #$id not found.");
+        return $this->synchronized(fn (): Signature => $this->findByIdUnlocked($id));
     }
 
     public function findByToken(#[\SensitiveParameter] string $token): ?Signature
     {
-        return $this->fetchOne($this->run('SELECT * FROM signatures WHERE token = :token', [':token' => $token]));
+        return $this->synchronized(fn (): ?Signature => $this->fetchOne(
+            $this->run('SELECT * FROM signatures WHERE token = :token', [':token' => $token]),
+        ));
     }
 
     public function confirm(Signature $signature): void
     {
-        $this->run(
-            "UPDATE signatures SET status = 'confirmed', confirmed_at = :now WHERE id = :id AND status = 'pending'",
-            [':now' => self::now(), ':id' => $signature->id],
-        );
+        $this->synchronized(function () use ($signature): void {
+            $this->run(
+                "UPDATE signatures SET status = 'confirmed', confirmed_at = :now WHERE id = :id AND status = 'pending'",
+                [':now' => self::now(), ':id' => $signature->id],
+            );
+        });
     }
 
     public function countConfirmed(string $petitionSlug): int
     {
-        return $this->countByStatus($petitionSlug, 'confirmed');
+        return $this->synchronized(fn (): int => $this->countByStatus($petitionSlug, 'confirmed'));
     }
 
     public function countPending(string $petitionSlug): int
     {
-        return $this->countByStatus($petitionSlug, 'pending');
+        return $this->synchronized(fn (): int => $this->countByStatus($petitionSlug, 'pending'));
     }
 
     /** @return list<Signature> */
     public function allConfirmed(string $petitionSlug): array
     {
-        return $this->fetchAll($this->run(
+        return $this->synchronized(fn (): array => $this->fetchAll($this->run(
             "SELECT * FROM signatures WHERE petition_slug = :slug AND status = 'confirmed' ORDER BY confirmed_at ASC",
             [':slug' => $petitionSlug],
-        ));
+        )));
     }
 
     /**
@@ -120,17 +128,42 @@ final class SignatureRepository
      */
     public function recentConfirmed(string $petitionSlug, int $limit = 8): array
     {
-        // id DESC as a tiebreaker: confirmed_at has only second precision, so signatures
-        // confirmed within the same second (e.g. a batch paper import) would tie otherwise.
-        $stmt = $this->prepare(
-            "SELECT * FROM signatures WHERE petition_slug = :slug AND status = 'confirmed'
-                ORDER BY confirmed_at DESC, id DESC LIMIT :limit"
-        );
-        $stmt->bindValue(':slug', $petitionSlug);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
+        return $this->synchronized(function () use ($petitionSlug, $limit): array {
+            // id DESC as a tiebreaker: confirmed_at has only second precision, so signatures
+            // confirmed within the same second (e.g. a batch paper import) would tie otherwise.
+            $stmt = $this->prepare(
+                "SELECT * FROM signatures WHERE petition_slug = :slug AND status = 'confirmed'
+                    ORDER BY confirmed_at DESC, id DESC LIMIT :limit"
+            );
+            $stmt->bindValue(':slug', $petitionSlug);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
 
-        return $this->fetchAll($stmt);
+            return $this->fetchAll($stmt);
+        });
+    }
+
+    private function findByIdUnlocked(int $id): Signature
+    {
+        return $this->fetchOne($this->run('SELECT * FROM signatures WHERE id = :id', [':id' => $id]))
+            ?? throw new \RuntimeException("Signature #$id not found.");
+    }
+
+    /** @param callable(): mixed $operation */
+    private function synchronized(callable $operation): mixed
+    {
+        if ($this->lock === null) {
+            return $operation();
+        }
+
+        if (!$this->lock->lock()) {
+            throw new \RuntimeException('Could not acquire the SQLite coroutine lock.');
+        }
+        try {
+            return $operation();
+        } finally {
+            $this->lock->unlock();
+        }
     }
 
     private function countByStatus(string $petitionSlug, string $status): int

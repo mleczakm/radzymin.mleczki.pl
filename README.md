@@ -203,7 +203,11 @@ zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład: `content/t
 - **Baza danych**: SQLite (plik) przez PDO. Jedna tabela `signatures` z unikalnym
   indeksem `(petition_slug, email)` — uniemożliwia podwójny podpis tym samym e-mailem pod
   tą samą petycją. Połączenie PDO tworzone jest leniwie, dopiero w `onWorkerStart` (po forku
-  procesu workera), bo uchwytów SQLite nie wolno dzielić między procesami.
+  procesu workera), bo uchwytów SQLite nie wolno dzielić między procesami. Obraz kompiluje
+  Swoole z obsługą korutyn PDO SQLite. Jedno połączenie PDO jest chronione blokadą korutynową
+  przez cały czas pojedynczej operacji repozytorium (w tym `INSERT` i odczyt `lastInsertId()`);
+  oczekiwanie na blokadę nie zatrzymuje pozostałych korutyn. `busy_timeout` wynosi 5 sekund,
+  a dziennik WAL pozostaje wyłączony ze względu na wolumeny FUSE/virtiofs.
 - **Limiter żądań**: `Swoole\Table` w pamięci współdzielonej (4096 wierszy, ok. 0,5 MB;
   tabela jest alokowana w całości przy starcie) — liczniki per IP widoczne dla wszystkich
   workerów bez blokad. Wygasłe wpisy są usuwane, zanim tabela się zapełni.

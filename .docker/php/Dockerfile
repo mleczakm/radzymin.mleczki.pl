@@ -5,14 +5,20 @@ FROM php:8.5-cli-alpine AS php-base
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# install-php-extensions resolves and builds the current stable ext-swoole
-# (and friends) non-interactively — see https://github.com/mlocati/docker-php-extension-installer
 # io_uring support is skipped: it's auto-enabled whenever liburing is present, but the
 # io_uring syscalls are blocked (EPERM) under many container seccomp profiles (including
 # this build's sandbox and, likely, the target Mikrus host), which crash-loops every worker.
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/install-php-extensions
+# The PDO SQLite coroutine hook is optional in Swoole. Build it explicitly, and keep
+# io_uring disabled because its syscalls are blocked by some container hosts.
 RUN chmod +x /usr/local/bin/install-php-extensions \
-    && IPE_SWOOLE_WITHOUT_IOURING=1 install-php-extensions swoole pdo_sqlite intl opcache
+    && IPE_SWOOLE_WITHOUT_IOURING=1 install-php-extensions pdo_sqlite intl opcache sockets
+
+RUN apk add --no-cache sqlite-libs \
+    && apk add --no-cache --virtual .swoole-build-deps $PHPIZE_DEPS linux-headers openssl-dev sqlite-dev \
+    && CPPFLAGS="-DHAVE_FUTEX" pecl install --configureoptions 'enable-sockets="yes" enable-swoole-sqlite="yes" enable-iouring="no" enable-brotli="no"' swoole \
+    && docker-php-ext-enable swoole \
+    && apk del .swoole-build-deps
 
 WORKDIR /app
 
