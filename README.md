@@ -305,6 +305,27 @@ Panel pozwala:
   `Imię Nazwisko;Miejscowość` (jedna osoba na wiersz) od razu zapisuje je jako potwierdzone
   (`source = paper`), więc licznik na stronie łączy podpisy online i papierowe.
 
+### Anonimizacja dokumentów (`/admin/anonimizacja`)
+
+Narzędzie działa wyłącznie w przeglądarce — tekst i pliki nie trafiają na serwer:
+
+- **Tekst** — wklejasz treść (np. plik sprawy z `content/topics/`), a PESEL (z sumą kontrolną),
+  e-mail, telefon i adres zamieniają się na `[PESEL]`, `[E-MAIL]`, `[TELEFON]`, `[ADRES]`.
+  Imiona i nazwiska wpisujesz w polu „do zamazania" (zapamiętywane w przeglądarce); łapane są
+  także odmienione formy i zamieniane na `[DANE]`.
+- **PDF** — wykryte fragmenty są zamalowywane czarnymi prostokątami; możesz dorysować własne
+  (przeciągnięcie) i usunąć zbędne (kliknięcie). Wynik to nowy PDF złożony wyłącznie z obrazów
+  stron, bez warstwy tekstowej, czcionek i metadanych, więc zamalowanych danych nie da się
+  odzyskać. Po zapisie program sam sprawdza, że w wyniku nie ma tekstu. Zamiast PDF można zapisać strony jako WebP: osobny plik dla każdej strony albo jeden animowany
+  WebP ze slajdami (czas slajdu do ustawienia; składany w przeglądarce, bez bibliotek). Wymaga
+  przeglądarki umiejącej zapisać WebP (Safari zwykle nie). Cena: wynik nie jest
+  przeszukiwalny i jest większy. Skan bez warstwy tekstowej (bez OCR) trzeba zamalować ręcznie.
+  Podczas pracy karta musi być widoczna (pdf.js renderuje strony w `requestAnimationFrame`).
+
+Wykrywanie jest heurystyczne — zawsze przejrzyj wynik przed publikacją. Kod:
+[public/anonymize/](public/anonymize/) (`pii-check.js` jest wspólny z szablonem jawna-sprawa;
+`vendor/` to pdf.js 6.3.289 i pdf-lib 1.17.1 z licencjami, bez CDN).
+
 ## Lista do zbierania podpisów papierowo
 
 `GET /petycja/{slug}/lista` pokazuje zwykłą stronę HTML przygotowaną do druku na papierze A4
