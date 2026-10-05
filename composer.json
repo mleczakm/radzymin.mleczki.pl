@@ -8,6 +8,7 @@
         "ext-json": "*",
         "ext-pdo_sqlite": "*",
         "ext-swoole": "*",
+        "endroid/qr-code": "^6.0",
         "league/commonmark": "^2.10",
         "psr/log": "^3.0",
         "symfony/mailer": "^8.1",

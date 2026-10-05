@@ -11,6 +11,9 @@ apps:
       DB_PATH: /app/db/data.sqlite
       BASE_URL: "https://{{ domain | default('radzymin.mleczki.pl') }}"
       MAIL_FROM: radzymin.mleczki@gmail.com
+      ORGANIZER_NAME: Michał Mleczko
+      ORGANIZER_ADDRESS: zamieszkały w Radzyminie
+      ORGANIZER_EMAIL: kontakt@radzymin.mleczki.pl
       CONTACT_FORM_ENDPOINT: https://formspree.io/f/xwlppzoj
     healthcheck_enabled: true
     ipv6: "{{ mikrus_ipv6 }}"

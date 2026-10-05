@@ -1,12 +1,20 @@
 ---
-heading: Napisz do mnie
+heading: O mnie
 ---
 
-Cześć! Angażuję się w sprawy lokalne w Radzyminie. Ta strona powstała, żeby ułatwić
-składanie petycji i pokazać, na jakim etapie są sprawy, którymi się zajmuję.
+Jestem mieszkańcem Radzymina od kilku lat. Moja przygoda z miastem zaczęła się od
+oddania krwi — honorowo, w ramach lokalnego klubu HDK i podczas wyjazdowych akcji
+krwiodawstwa. Moje dzieci zdążyły już ukończyć miejscowe przedszkole, a ja po mieście
+jeżdżę charakterystycznymi rowerami cargo. Można je poznać i przetestować przez
+[cargo.mleczki.pl](https://cargo.mleczki.pl).
 
-Masz pomysł, problem do rozwiązania albo chcesz pomóc w zbieraniu podpisów? Napisz lub
-zadzwoń — **odpowiadam osobiście** i chętnie porozmawiam o tym, co ważne dla Ciebie
-i Twojej okolicy.
+Staram się dbać o porządek i bezpieczeństwo wszystkich mieszkańców, szczególnie
+pieszych, rowerzystów i osób korzystających z komunikacji miejskiej. Jako kierowca
+zwracam też uwagę na prawidłowe oznakowanie oraz stan ulic i pozostałej infrastruktury.
 
-*(Przykładowy tekst — zastąp własnym w pliku `content/about.md`.)*
+Inspiracji szukam w organizacji miast i ulic w Wielkiej Brytanii, Holandii, Danii
+i Włoszech. Chciałbym przenosić do Radzymina to, co sprawdza się tam najlepiej — tak,
+żeby rodzice nie bali się wypuścić dziecka samodzielnie do szkoły pieszo lub na rowerze.
+
+Jeśli masz pomysł, zauważyłeś problem albo chcesz działać razem, napisz do mnie.
+Odpowiadam osobiście.

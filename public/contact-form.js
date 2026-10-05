@@ -56,6 +56,9 @@
       setStatus('error', failureMessage('Brak połączenia z serwerem.'));
     } finally {
       submit.disabled = false;
+      if (window.turnstile) {
+        if (form.querySelector('.cf-turnstile')) window.turnstile.reset();
+      }
     }
   });
 })();

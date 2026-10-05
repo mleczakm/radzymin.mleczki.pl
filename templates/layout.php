@@ -4,12 +4,14 @@
  * @var string $title
  * @var string|null $description
  * @var bool $fullWidth
- * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null} $organizer
+ * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null, turnstileSiteKey: string|null} $organizer
  */
 ?>
 <?php
 $pageDescription = $description ?? 'Niezależna inicjatywa mieszkańców Radzymina: petycje do podpisania i sprawy, którymi się zajmuję.';
 $phone = $organizer['phone'] ?? null;
+$contactFormEndpoint = $organizer['contactFormEndpoint'] ?? null;
+$turnstileSiteKey = $organizer['turnstileSiteKey'] ?? null;
 ?>
 <!doctype html>
 <html lang="pl">
@@ -43,7 +45,8 @@ $phone = $organizer['phone'] ?? null;
     <nav class="site-nav" aria-label="Główna nawigacja">
       <a class="site-nav-link" href="/#petycje">Petycje</a>
       <a class="site-nav-link" href="/#sprawy">Sprawy</a>
-      <a class="site-nav-cta" href="/#kontakt">Napisz do mnie</a>
+      <a class="site-nav-link" href="/#o-mnie">O mnie</a>
+      <a class="site-nav-cta" href="/#kontakt" data-contact-open>Napisz do mnie</a>
     </nav>
   </div>
 </header>
@@ -55,7 +58,7 @@ $phone = $organizer['phone'] ?? null;
 <footer class="site-footer">
   <div class="wrap">
     <p class="footer-contact">
-      Pytania, pomysły, chęć pomocy? <a href="mailto:<?= e($organizer['contactEmail']) ?>">Napisz do mnie</a><?php if ($phone): ?>
+      Pytania, pomysły, chęć pomocy? <a href="/#kontakt" data-contact-open>Napisz do mnie</a><?php if ($phone): ?>
       lub zadzwoń: <a href="tel:<?= e(preg_replace('/[^\d+]/', '', $phone)) ?>"><?= e($phone) ?></a><?php endif; ?>
     </p>
     <p class="disclaimer">
@@ -63,7 +66,52 @@ $phone = $organizer['phone'] ?? null;
       i nie występuje w ich imieniu; herb i logo należą do Gminy Radzymin.
     </p>
     <p><a href="/polityka-prywatnosci">Polityka prywatności</a></p>
+    <p class="site-credit">Stronę wykonał <a href="https://mleczakm.github.io/platnosci-blik/" rel="noopener" target="_blank">Michał Mleczko</a> — strony z płatnościami BLIK bez operatora płatności i bez abonamentu.</p>
   </div>
 </footer>
+<dialog class="contact-dialog" id="contact-dialog" aria-labelledby="contact-dialog-title">
+  <div class="contact-dialog-head">
+    <h2 id="contact-dialog-title">Napisz do mnie</h2>
+    <button class="dialog-close" type="button" data-contact-close aria-label="Zamknij formularz">&times;</button>
+  </div>
+  <form class="contact-form" method="post" action="<?= e($contactFormEndpoint) ?>"
+        data-contact-form data-fallback-email="<?= e($organizer['contactEmail']) ?>">
+    <input type="hidden" name="_subject" value="Radzymińskie Petycje — wiadomość ze strony">
+    <input type="hidden" name="_language" value="pl">
+    <div class="field hp-field" aria-hidden="true">
+      <label for="contact-gotcha">Nie wypełniaj tego pola</label>
+      <input type="text" id="contact-gotcha" name="_gotcha" tabindex="-1" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="contact-name">Imię <span class="optional">(opcjonalnie)</span></label>
+      <input type="text" id="contact-name" name="name" autocomplete="name" maxlength="100">
+    </div>
+    <div class="field">
+      <label for="contact-email">Adres e-mail</label>
+      <input type="email" id="contact-email" name="email" autocomplete="email" required maxlength="190">
+      <p class="field-hint">Na ten adres wyślę odpowiedź.</p>
+    </div>
+    <div class="field">
+      <label for="contact-message">Wiadomość</label>
+      <textarea id="contact-message" name="message" rows="5" required maxlength="4000"></textarea>
+    </div>
+    <?php if ($turnstileSiteKey !== null): ?>
+      <div class="cf-turnstile" data-sitekey="<?= e($turnstileSiteKey) ?>" data-action="contact"></div>
+    <?php endif; ?>
+    <div class="field field-checkbox">
+      <label>
+        <input type="checkbox" name="consent" value="tak" required>
+        <span>Wyrażam zgodę na przetwarzanie moich danych (imię, e-mail, treść wiadomości) w celu odpowiedzi na wiadomość, zgodnie z <a href="/polityka-prywatnosci#formularz-kontaktowy">polityką prywatności</a>.</span>
+      </label>
+    </div>
+    <button type="submit" class="button button-accent">Wyślij wiadomość</button>
+    <p class="form-status" data-contact-status role="status" aria-live="polite"></p>
+  </form>
+</dialog>
+<script src="<?= e(asset_url('contact-form.js')) ?>" defer></script>
+<script src="<?= e(asset_url('contact-modal.js')) ?>" defer></script>
+<?php if ($turnstileSiteKey !== null): ?>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<?php endif; ?>
 </body>
 </html>

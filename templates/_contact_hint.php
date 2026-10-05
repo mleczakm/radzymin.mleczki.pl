@@ -9,7 +9,7 @@
   <p>
     <strong>Masz pytanie albo chcesz pomóc?</strong>
     Napisz do mnie wprost:
-    <a href="mailto:<?= e($organizer['contactEmail']) ?>?subject=<?= $subject ?>"><?= e($organizer['contactEmail']) ?></a>.
+    <a href="mailto:<?= e($organizer['contactEmail']) ?>?subject=<?= $subject ?>" data-contact-open><?= e($organizer['contactEmail']) ?></a>.
     Chętnie odpowiem.
   </p>
 </aside>

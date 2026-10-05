@@ -23,8 +23,8 @@ osoby podpisującej (art. 6 ust. 1 lit. a RODO).</p>
 
 <h2>Odbiorcy danych</h2>
 <p>Dane mogą zostać przekazane adresatowi petycji w zakresie niezbędnym do jej rozpatrzenia oraz
-podmiotom technicznie obsługującym serwis (hosting, dostawca poczty e-mail używany wyłącznie
-do wysyłki linku potwierdzającego).</p>
+podmiotom technicznie obsługującym serwis: dostawcy hostingu mikr.us i dostawcy poczty e-mail
+używanemu do wysyłki linku potwierdzającego.</p>
 
 <h2 id="formularz-kontaktowy">Formularz kontaktowy</h2>
 <p>Jeśli napiszesz do mnie przez formularz na stronie głównej, podane w nim dane — imię (opcjonalnie),

@@ -26,6 +26,7 @@
   <?= $partial('_share', [
       'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
       'shareText' => 'Podpisz petycję: ' . $petition->title,
+      'qrUrl' => $baseUrl . '/petycja/' . $petition->slug . '/qr',
   ]) ?>
   <p>
     Zbierasz podpisy wśród sąsiadów?

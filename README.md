@@ -14,8 +14,8 @@ ale z bieżącą wersją `ext-swoole`.
    To samo dotyczy przykładowej sprawy w [content/topics/](content/topics/).
    Podmień też tekst „o mnie” w [content/about.md](content/about.md) (sekcja kontaktowa na
    stronie głównej) i — opcjonalnie — ustaw `ORGANIZER_PHONE`.
-2. **Uzupełnij dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
-   (imię i nazwisko / nazwa organizatora, adres, e-mail kontaktowy) lub przez zmienne
+2. **Sprawdź dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
+   (imię i nazwisko, miejscowość, e-mail kontaktowy). W produkcji są ustawiane przez
    `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
 3. Skonfiguruj konto `radzymin.mleczki@gmail.com` (hasło aplikacji Google, nie hasło do konta)
    i ustaw `MAILER_DSN`.
@@ -35,20 +35,29 @@ ale z bieżącą wersją `ext-swoole`.
 - **To nie jest strona urzędowa** — stopka, hero i formularz podpisu mówią to wprost, żeby nikt
   nie oddał danych osobowych w przekonaniu, że robi to Gminie. Herb i logo należą do Gminy;
   przed publikacją warto upewnić się, że zgadza się na takie użycie.
-- **Kontakt**: sekcja „Napisz do mnie” na stronie głównej bierze tekst z
+- **Kontakt**: sekcja „O mnie” na stronie głównej bierze tekst z
   [content/about.md](content/about.md) (front matter `heading`, treść w Markdown), a adres e-mail
   i opcjonalny telefon z `config/organizer.php` (`ORGANIZER_EMAIL`, `ORGANIZER_PHONE`). Zaproszenie
   do kontaktu jest też pod formularzem podpisu, na stronie po wysłaniu i po potwierdzeniu.
-- **Formularz kontaktowy** (Formspree): w sekcji kontaktowej, gdy ustawiono `CONTACT_FORM_ENDPOINT`
-  (adres `https://formspree.io/f/<id>`, inne są ignorowane; na produkcji ustawiany w sekrecie
-  GitHub Actions `DOTENV`, lokalnie celowo nie, żeby próby nie
-  wysyłały prawdziwych wiadomości). Działa też bez JavaScriptu (zwykły POST do Formspree), a
-  [public/contact-form.js](public/contact-form.js) wysyła wiadomość w tle i zostawia odwiedzającego
-  na stronie — bez skryptów zewnętrznych. Pole `_gotcha` to honeypot Formspree; dane trafiają do
+- **Adres kontaktowy**: `kontakt@radzymin.mleczki.pl` jest obsługiwany przez Cloudflare Email Routing
+  na subdomenie `radzymin.mleczki.pl` i przekazywany do `do@mleczki.pl`. Rekordy MX domeny
+  głównej `mleczki.pl` należą do Zoho; nie zmieniaj ich przy konfiguracji strony.
+- **Formularz kontaktowy** (Formspree): przycisk „Napisz do mnie” otwiera modalny formularz.
+  Endpoint `CONTACT_FORM_ENDPOINT` jest ustawiony dla produkcji w `ansible/playbooks/config.yml`;
+  lokalnie domyślnie wskazuje ten sam formularz, więc wysłanie testowej wiadomości z localhost
+  dostarczy prawdziwy e-mail organizatorowi.
+  Przy włączeniu Cloudflare Turnstile ustaw publiczny `TURNSTILE_SITE_KEY` w produkcyjnym `DOTENV`
+  i dodaj odpowiadający mu prywatny klucz w ustawieniach CAPTCHA formularza Formspree.
+  Formspree weryfikuje token po swojej stronie. [public/contact-form.js](public/contact-form.js)
+  wysyła wiadomość w tle i zostawia odwiedzającego na stronie; przy wyłączonym JavaScripcie przycisk
+  kontaktu otworzy domyślny program pocztowy. Pole `_gotcha` stanowi dodatkowy honeypot. Dane trafiają do
   Formspree, Inc. (USA), co opisuje polityka prywatności. Darmowy plan Formspree ma miesięczny limit
-  wiadomości, więc w panelu Formspree warto włączyć ochronę przed spamem (reCAPTCHA/Turnstile).
+  wiadomości.
 - **Udostępnianie**: strona petycji, strona po wysłaniu formularza i strona potwierdzenia mają
-  linki WhatsApp / Facebook / e-mail. To zwykłe linki — bez JavaScriptu i skryptów zewnętrznych.
+  linki WhatsApp / Facebook / e-mail oraz mały, lokalnie generowany kod QR prowadzący do kartki do druku.
+  To zwykłe linki — bez JavaScriptu i skryptów zewnętrznych.
+- **Stopka**: zawiera informację o wykonawcy zgodną z pozostałymi serwisami Michała Mleczki.
+- **O mnie**: zdjęcie i opis pochodzą z repozytorium; zdjęcie jest publikowane w mniejszej wersji bez metadanych EXIF.
 
 ## Treść petycji
 
@@ -411,9 +420,9 @@ APP_SECRET=...            # php -r "echo bin2hex(random_bytes(32));"
 MAILER_DSN=smtp://radzymin.mleczki%40gmail.com:HASLO_APLIKACJI@smtp.gmail.com:587
 ADMIN_USER=admin
 ADMIN_PASSWORD_HASH=...   # bin/hash-password "..."
-ORGANIZER_NAME=...
-ORGANIZER_ADDRESS=...
-ORGANIZER_EMAIL=radzymin.mleczki@gmail.com
+ORGANIZER_NAME=Michał Mleczko
+ORGANIZER_ADDRESS=zamieszkały w Radzyminie
+ORGANIZER_EMAIL=kontakt@radzymin.mleczki.pl
 # opcjonalnie:
 CONTACT_FORM_ENDPOINT=https://formspree.io/f/...
 ```

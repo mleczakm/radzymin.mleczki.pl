@@ -32,6 +32,7 @@
       <?= $partial('_share', [
           'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
           'shareText' => 'Podpisałem/am petycję: ' . $petition->title . '. Dołącz!',
+          'qrUrl' => $baseUrl . '/petycja/' . $petition->slug . '/qr',
       ]) ?>
     </div>
 

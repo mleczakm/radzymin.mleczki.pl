@@ -12,6 +12,8 @@ use App\Action\ConfirmAction;
 use App\Action\HealthAction;
 use App\Action\HomeAction;
 use App\Action\PetitionPrintAction;
+use App\Action\PetitionQrAction;
+use App\Action\PetitionQrImageAction;
 use App\Action\PetitionShowAction;
 use App\Action\PetitionSignAction;
 use App\Action\PrivacyAction;
@@ -55,6 +57,8 @@ $router->get('/sprawy/{slug}', new TopicShowAction($services, $view));
 $router->get('/petycja/{slug}', new PetitionShowAction($services, $view));
 $router->post('/petycja/{slug}/podpisz', new PetitionSignAction(new ConfirmationEmailSender($services), $services, $view, $validator));
 $router->get('/petycja/{slug}/lista', new PetitionPrintAction($services, $view));
+$router->get('/petycja/{slug}/qr', new PetitionQrAction($services, $view));
+$router->get('/petycja/{slug}/qr.svg', new PetitionQrImageAction($services));
 $router->get('/potwierdz/{token}', new ConfirmAction($services, $view));
 
 $router->get('/admin', new DashboardAction($services, $view));

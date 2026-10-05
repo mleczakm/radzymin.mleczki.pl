@@ -55,6 +55,25 @@ tbody td { height: 8mm; }
 .city { width: 24%; }
 .signature { width: 37%; }
 
+.qr-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 210mm;
+  min-height: 245mm;
+  margin: 0 auto 24px;
+  padding: 18mm;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.15);
+}
+.qr-eyebrow { margin: 0 0 10mm; color: #005a8f; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.qr-sheet h1 { max-width: 165mm; font-size: 25pt; }
+.qr-invitation { margin: 4mm 0 8mm; font-size: 15pt; }
+.petition-qr { display: block; width: min(118mm, 68vw); height: auto; }
+.qr-url { margin: 5mm 0 0; color: #33424f; font-size: 10pt; overflow-wrap: anywhere; }
+
 thead { display: table-header-group; }
 tr { break-inside: avoid; }
 
@@ -64,6 +83,9 @@ tr { break-inside: avoid; }
   body { background: #fff; }
   .toolbar { display: none; }
   .sheet { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+  .qr-sheet { max-width: none; min-height: 270mm; margin: 0; padding: 8mm; box-shadow: none; }
+  .petition-qr { width: 112mm; }
+  .qr-sheet h1 { font-size: 22pt; }
 }
 
 @media (max-width: 600px) {

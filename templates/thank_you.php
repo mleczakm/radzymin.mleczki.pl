@@ -15,5 +15,6 @@
 <?= $partial('_share', [
     'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
     'shareText' => 'Podpisz petycję: ' . $petition->title,
+    'qrUrl' => $baseUrl . '/petycja/' . $petition->slug . '/qr',
 ]) ?>
 <?= $partial('_contact_hint', ['contactSubject' => $petition->title]) ?>
