@@ -112,6 +112,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install ansible-core
 
+      - name: Set up Node for Cloudflare CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Cloudflare CLI
+        run: |
+          npm install --global cf@1.0.0-beta.12
+          cf --version
+
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh

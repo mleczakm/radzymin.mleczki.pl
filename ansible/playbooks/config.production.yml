@@ -18,3 +18,6 @@ apps:
     ipv6: "{{ mikrus_ipv6 }}"
     cytrus_host: "{{ cytrus_host }}"
     proxied: true
+    email_routing:
+      address: kontakt@radzymin.mleczki.pl
+      forward_to: do@mleczki.pl

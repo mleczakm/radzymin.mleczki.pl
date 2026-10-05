@@ -117,6 +117,29 @@
   delegate_to: localhost
   when: cloudflare_api_token is defined and existing_record is not none
 
+- name: "Reconcile Cloudflare Email Routing for {{ app.domain }}"
+  command:
+    argv:
+      - python3
+      - "{{ playbook_dir }}/../scripts/ensure_email_routing.py"
+      - --zone
+      - "{{ cloudflare_zone_id }}"
+      - --subdomain
+      - "{{ app.domain }}"
+      - --address
+      - "{{ app.email_routing.address }}"
+      - --forward-to
+      - "{{ app.email_routing.forward_to }}"
+  environment:
+    CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
+  register: email_routing_result
+  changed_when: (email_routing_result.stdout | from_json).changed
+  delegate_to: localhost
+  when:
+    - app.email_routing is defined
+    - cloudflare_api_token is defined
+    - cloudflare_zone_id is defined
+
 - name: "Verify Cytrus Domain for {{ app.domain }}"
   uri:
     url: "https://api.mikr.us/domain"

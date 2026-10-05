@@ -41,7 +41,9 @@ ale z bieżącą wersją `ext-swoole`.
   do kontaktu jest też pod formularzem podpisu, na stronie po wysłaniu i po potwierdzeniu.
 - **Adres kontaktowy**: `kontakt@radzymin.mleczki.pl` jest obsługiwany przez Cloudflare Email Routing
   na subdomenie `radzymin.mleczki.pl` i przekazywany do `do@mleczki.pl`. Rekordy MX domeny
-  głównej `mleczki.pl` należą do Zoho; nie zmieniaj ich przy konfiguracji strony.
+  głównej `mleczki.pl` należą do Zoho; nie zmieniaj ich przy konfiguracji strony. Konfiguracja
+  adresu i odbiorcy jest w `ansible/playbooks/config.production.yml`, a skrypt
+  `ansible/scripts/ensure_email_routing.py` uzgadnia ją przez `cf` przy każdym wdrożeniu.
 - **Formularz kontaktowy** (Formspree): przycisk „Napisz do mnie” otwiera modalny formularz.
   Endpoint `CONTACT_FORM_ENDPOINT` jest ustawiony dla produkcji w `ansible/playbooks/config.yml`;
   lokalnie domyślnie wskazuje ten sam formularz, więc wysłanie testowej wiadomości z localhost
@@ -410,7 +412,7 @@ Cloudflare DNS i Cytrusa, tak jak [cargo.mleczki.pl](https://github.com/mleczakm
 | `SSH_PRIVATE_KEY` | klucz SSH do serwera Mikrus |
 | `MIKRUS_SSH_HOST`, `MIKRUS_SSH_PORT`, `MIKRUS_IPV6` | dane dostępowe do serwera |
 | `CYTRUS_IPV4`, `CYTRUS_API_TOKEN` | Mikrus Cytrus (proxy domenowe) |
-| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID` | zarządzanie rekordem DNS domeny |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID` | zarządzanie rekordem DNS i Email Routing dla subdomeny; token musi mieć także uprawnienia Email Routing do odczytu i zapisu |
 | `DOTENV` | zawartość pliku ze **sekretami produkcyjnymi** (patrz niżej; to nie jest commitowany `.env` z wartościami deweloperskimi) |
 
 Zawartość sekretu `DOTENV` (jeden `KLUCZ=wartość` na linię):
