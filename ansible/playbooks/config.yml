@@ -1,5 +1,5 @@
 ---
-# Petycje Radzymin deployment configuration
+# Radzymińskie Petycje deployment configuration
 apps:
   - name: radzymin-petycje
     domain: "{{ domain | default('radzymin.mleczki.pl') }}"

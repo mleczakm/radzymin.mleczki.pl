@@ -13,7 +13,7 @@
 ?>
 <?php
 $phone = $organizer['phone'] ?? null;
-$mailto = 'mailto:' . $organizer['contactEmail'] . '?subject=' . rawurlencode('Petycje Radzymin — wiadomość');
+$mailto = 'mailto:' . $organizer['contactEmail'] . '?subject=' . rawurlencode('Radzymińskie Petycje — wiadomość');
 $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
 $formEndpoint = $organizer['contactFormEndpoint'];
 ?>
@@ -193,7 +193,7 @@ $formEndpoint = $organizer['contactFormEndpoint'];
                 data-contact-form data-fallback-email="<?= e($organizer['contactEmail']) ?>">
             <h3>Wyślij wiadomość</h3>
 
-            <input type="hidden" name="_subject" value="Petycje Radzymin — wiadomość ze strony">
+            <input type="hidden" name="_subject" value="Radzymińskie Petycje — wiadomość ze strony">
             <div class="field hp-field" aria-hidden="true">
               <label for="contact-gotcha">Nie wypełniaj tego pola</label>
               <input type="text" id="contact-gotcha" name="_gotcha" tabindex="-1" autocomplete="off">

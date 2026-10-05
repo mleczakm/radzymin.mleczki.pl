@@ -31,7 +31,7 @@ final class Renderer
     public function renderPage(
         string $template,
         array $data = [],
-        string $title = 'Petycje Radzymin',
+        string $title = 'Radzymińskie Petycje',
         ?string $description = null,
         bool $fullWidth = false,
     ): string {

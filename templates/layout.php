@@ -21,7 +21,7 @@ $phone = $organizer['phone'] ?? null;
 <meta name="theme-color" content="#007bc2">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pl_PL">
-<meta property="og:site_name" content="Petycje Radzymin">
+<meta property="og:site_name" content="Radzymińskie Petycje">
 <meta property="og:title" content="<?= e($title) ?>">
 <meta property="og:description" content="<?= e($pageDescription) ?>">
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -33,10 +33,10 @@ $phone = $organizer['phone'] ?? null;
 
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="/" aria-label="Petycje Radzymin — strona główna">
+    <a class="brand" href="/" aria-label="Radzymińskie Petycje — strona główna">
       <img class="brand-logo" src="/img/herb-gmina-radzymin.svg" alt="Herb Gminy Radzymin" width="46" height="66">
       <span class="brand-text">
-        <strong>Petycje Radzymin</strong>
+        <strong>Radzymińskie Petycje</strong>
         <small>niezależna inicjatywa mieszkańców</small>
       </span>
     </a>

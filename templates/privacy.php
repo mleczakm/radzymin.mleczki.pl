@@ -6,7 +6,7 @@
 <h1>Polityka prywatności</h1>
 
 <p>Poniższe informacje dotyczą przetwarzania danych osobowych osób podpisujących petycje
-w serwisie Petycje Radzymin, zgodnie z art. 13 RODO.</p>
+w serwisie Radzymińskie Petycje, zgodnie z art. 13 RODO.</p>
 
 <h2>Administrator danych</h2>
 <p>

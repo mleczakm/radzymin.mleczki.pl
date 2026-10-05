@@ -44,7 +44,7 @@ final class HomeAction
             'activeTopicCount' => count($activeTopics),
             'topics' => $topics,
             'about' => $this->services->about,
-        ], 'Petycje Radzymin — podpisz i zaangażuj się',
+        ], 'Radzymińskie Petycje — podpisz i zaangażuj się',
             'Podpisz petycję w kilka minut, pomóż zebrać podpisy i napisz do mnie. Niezależna inicjatywa mieszkańców Radzymina.',
             fullWidth: true,
         );

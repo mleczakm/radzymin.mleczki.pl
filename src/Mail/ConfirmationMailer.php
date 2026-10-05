@@ -46,7 +46,7 @@ final class ConfirmationMailer
         );
 
         $email = (new Email())
-            ->from(new Address($this->fromAddress, 'Petycje Radzymin'))
+            ->from(new Address($this->fromAddress, 'Radzymińskie Petycje'))
             ->to($signature->email)
             ->subject('Potwierdź podpis pod petycją: ' . $petition->title)
             ->text($text)

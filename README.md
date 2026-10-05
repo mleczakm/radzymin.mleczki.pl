@@ -1,4 +1,4 @@
-# radzymin.mleczki.pl — Petycje
+# Radzymińskie Petycje
 
 Serwis do bezpiecznego zbierania podpisów pod petycjami mieszkańców Radzymina.
 PHP + [Swoole](https://www.swoole.co.uk/) (współprogramy/coroutines), uruchamiany

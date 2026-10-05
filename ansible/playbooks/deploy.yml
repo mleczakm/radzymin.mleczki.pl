@@ -1,5 +1,5 @@
 ---
-- name: Deploy Petycje Radzymin
+- name: Deploy Radzymińskie Petycje
   hosts: mikrus
   become: yes
   vars_files:

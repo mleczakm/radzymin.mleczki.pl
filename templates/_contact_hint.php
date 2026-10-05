@@ -4,7 +4,7 @@
  * @var string|null $contactSubject
  */
 ?>
-<?php $subject = rawurlencode('Petycje Radzymin — ' . ($contactSubject ?? 'wiadomość')); ?>
+<?php $subject = rawurlencode('Radzymińskie Petycje — ' . ($contactSubject ?? 'wiadomość')); ?>
 <aside class="contact-hint">
   <p>
     <strong>Masz pytanie albo chcesz pomóc?</strong>

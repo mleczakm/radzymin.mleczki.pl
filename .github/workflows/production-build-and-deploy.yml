@@ -96,7 +96,7 @@ jobs:
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.event.workflow_run.head_sha }}
-            org.opencontainers.image.title=radzymin.mleczki.pl
+            org.opencontainers.image.title=Radzymińskie Petycje
           cache-from: |
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
