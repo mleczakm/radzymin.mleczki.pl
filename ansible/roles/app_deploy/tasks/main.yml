@@ -161,3 +161,22 @@
       - app.domain in (cytrus_domains.json | map(attribute='name') | list)
     fail_msg: "Domain {{ app.domain }} is not configured in Cytrus. Available domains: {{ cytrus_domains.json | map(attribute='name') | list }}"
   when: app.proxied | default(false)
+
+- name: "Verify Cytrus routes {{ app.domain }} to the deployed version"
+  uri:
+    url: "http://{{ cytrus_host }}/zdrowie?version={{ app_version | urlencode }}"
+    method: GET
+    headers:
+      Host: "{{ app.domain }}"
+    status_code: 200
+    return_content: true
+    timeout: 10
+  register: cytrus_health
+  until: >-
+    (cytrus_health.status | default(0)) == 200 and
+    (cytrus_health.content | default('')) == ('radzymin-petycje:' ~ app_version)
+  retries: 12
+  delay: 15
+  delegate_to: localhost
+  become: false
+  when: app.proxied | default(false)

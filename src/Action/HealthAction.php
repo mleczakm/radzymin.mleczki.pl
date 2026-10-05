@@ -12,6 +12,6 @@ final class HealthAction
     public function __invoke(Request $request, Response $response): void
     {
         $response->header('Content-Type', 'text/plain');
-        $response->end('ok');
+        $response->end('radzymin-petycje:' . \env('APP_VERSION', 'dev'));
     }
 }
