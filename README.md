@@ -8,12 +8,10 @@ ale z bieżącą wersją `ext-swoole`.
 
 ## Zanim wdrożysz na produkcję
 
-1. **Podmień treść petycji** — dodaj/edytuj pliki w
-   [content/petitions/](content/petitions/) (jeden plik Markdown na petycję, format opisany
-   niżej). Obecnie jest tam wyłącznie przykładowy wpis.
-   To samo dotyczy przykładowej sprawy w [content/topics/](content/topics/).
-   Podmień też tekst „o mnie” w [content/about.md](content/about.md) (sekcja kontaktowa na
-   stronie głównej) i — opcjonalnie — ustaw `ORGANIZER_PHONE`.
+1. **Uzupełnij treść** — petycje to pliki Markdown w [content/petitions/](content/petitions/),
+   sprawy w [content/topics/](content/topics/) (format opisany niżej). Dodawaj kolejne i edytuj
+   istniejące; tekst „o mnie” jest w [content/about.md](content/about.md) (sekcja kontaktowa na
+   stronie głównej). Opcjonalnie ustaw `ORGANIZER_PHONE`.
 2. **Sprawdź dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
    (imię i nazwisko, miejscowość, e-mail kontaktowy). W produkcji są ustawiane przez
    `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
@@ -201,8 +199,8 @@ na kolorze. Pod każdym wykresem jest zwijana tabela „Pokaż dane w tabeli” 
 (to jednocześnie tekstowy odpowiednik dla czytników ekranu). Etykiety dłuższe niż 18 znaków są
 skracane na osi (pełny tekst jest w podpowiedzi i w tabeli), a długie — pochylane. Błąd w bloku
 (brak tytułu, zła liczba wartości, ujemna wartość…) zatrzymuje start serwera z komunikatem
-zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład: `content/topics/przyklad-wniosek.md`
-(dane w nim są wymyślone).
+zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład:
+[content/topics/ciezarowki-zakaz-wjazdu-centrum.md](content/topics/ciezarowki-zakaz-wjazdu-centrum.md).
 
 ## Architektura
 
