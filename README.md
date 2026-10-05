@@ -383,15 +383,16 @@ i metryki projektowe (liczba parametrów/metod). Pojedyncze wyjątki są w kodzi
 `@mago-ignore` z uzasadnieniem. Sekrety i tokeny w konstruktorach mają `#[\SensitiveParameter]`,
 żeby nie trafiały do śladów stosu w logach.
 
-CI (`.github/workflows/ci.yml`) uruchamia analizator i linter jako osobne zadanie.
+CI (`.github/workflows/ci.yml`) uruchamia lint, analizę statyczną, testy i build obrazu.
 
 ## Wdrożenie
 
-Tag (`git tag vX.Y.Z && git push --tags`) uruchamia
+Zielony przebieg CI po pushu do `main` automatycznie uruchamia
 [`.github/workflows/production-build-and-deploy.yml`](.github/workflows/production-build-and-deploy.yml):
-build obrazu → `ghcr.io/mleczakm/radzymin.mleczki.pl` → deployment przez Ansible na serwer
-Mikrus, tym samym mechanizmem co [cargo.mleczki.pl](https://github.com/mleczakm/cargo.mleczki.pl)
-(rola `app_deploy`, Cloudflare DNS, Cytrus).
+generuje wersję `YYYYMMDDHHMM` w strefie `Europe/Warsaw`, buduje obraz do
+`ghcr.io/mleczakm/radzymin.mleczki.pl`, wdraża go przez Ansible na serwer Mikrus i tworzy
+GitHub Release. Pull requesty nie wdrażają produkcji. Wdrożenie korzysta z roli `app_deploy`,
+Cloudflare DNS i Cytrusa, tak jak [cargo.mleczki.pl](https://github.com/mleczakm/cargo.mleczki.pl).
 
 ### Wymagane sekrety repozytorium (Settings → Secrets and variables → Actions)
 

@@ -149,7 +149,11 @@ final class SignatureRepository
             ?? throw new \RuntimeException("Signature #$id not found.");
     }
 
-    /** @param callable(): mixed $operation */
+    /**
+     * @template TResult
+     * @param callable(): TResult $operation
+     * @return TResult
+     */
     private function synchronized(callable $operation): mixed
     {
         if ($this->lock === null) {

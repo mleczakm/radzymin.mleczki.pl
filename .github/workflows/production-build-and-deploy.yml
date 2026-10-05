@@ -1,12 +1,17 @@
 name: Production Build and Deploy
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_run:
+    workflows: [CI]
+    branches: [main]
+    types: [completed]
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 env:
@@ -16,12 +21,61 @@ env:
 
 jobs:
   build-and-deploy:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
     environment: production
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Generate date-based version
+        id: version
+        env:
+          TZ: Europe/Warsaw
+          TESTED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          version="$(date +'%Y%m%d%H%M')"
+          if git ls-remote --exit-code origin "refs/tags/$version" >/dev/null 2>&1; then
+            version="$(date +'%Y%m%d%H%M%S')"
+          fi
+          if git ls-remote --exit-code origin "refs/tags/$version" >/dev/null 2>&1; then
+            version="${version}-${TESTED_SHA:0:7}"
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Validate production secrets
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          MIKRUS_SSH_HOST: ${{ secrets.MIKRUS_SSH_HOST }}
+          MIKRUS_SSH_PORT: ${{ secrets.MIKRUS_SSH_PORT }}
+          MIKRUS_IPV6: ${{ secrets.MIKRUS_IPV6 }}
+          CYTRUS_IPV4: ${{ secrets.CYTRUS_IPV4 }}
+          CYTRUS_API_TOKEN: ${{ secrets.CYTRUS_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          for name in SSH_PRIVATE_KEY MIKRUS_SSH_HOST MIKRUS_SSH_PORT MIKRUS_IPV6 \
+            CYTRUS_IPV4 CYTRUS_API_TOKEN CLOUDFLARE_API_TOKEN CLOUDFLARE_ZONE_ID DOTENV; do
+            if [[ -z "${!name}" ]]; then
+              echo "Missing production secret: $name" >&2
+              exit 1
+            fi
+          done
+          for name in APP_SECRET ADMIN_USER ADMIN_PASSWORD_HASH; do
+            if ! grep -Eq "^${name}=.+$" <<< "$DOTENV"; then
+              echo "DOTENV is missing required variable: $name" >&2
+              exit 1
+            fi
+          done
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -37,26 +91,19 @@ jobs:
           target: prod
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.value }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.revision=${{ github.event.workflow_run.head_sha }}
             org.opencontainers.image.title=radzymin.mleczki.pl
           cache-from: |
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
 
-      - name: Checkout infrastructure-mikrus for shared roles
-        uses: actions/checkout@v4
-        with:
-          repository: mleczakm/infrastructure-mikrus
-          path: infrastructure-mikrus
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -64,8 +111,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ansible-core
-          pip install -r infrastructure-mikrus/requirements.txt
-          ansible-galaxy install -r infrastructure-mikrus/ansible-collections-requirements.yml
 
       - name: Setup SSH key
         run: |
@@ -80,12 +125,12 @@ jobs:
           DOTENV: ${{ secrets.DOTENV }}
         run: |
           printf '%s\n' "$DOTENV" > .env.production
-          echo "ENV_FILE_PATH=$(pwd)/.env.production" >> $GITHUB_ENV
+          echo "ENV_FILE_PATH=$(pwd)/.env.production" >> "$GITHUB_ENV"
 
       - name: Deploy to Mikrus
         run: |
           ansible-playbook -i ansible/inventory.ini ansible/playbooks/deploy.yml \
-            --extra-vars "app_version=${{ github.ref_name }} cytrus_host=${{ secrets.CYTRUS_IPV4 }}" \
+            --extra-vars "app_version=${{ steps.version.outputs.value }} cytrus_host=${{ secrets.CYTRUS_IPV4 }}" \
             --extra-vars "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             --extra-vars "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}" \
             --extra-vars "cytrus_api_token=${{ secrets.CYTRUS_API_TOKEN }}" \
@@ -96,4 +141,16 @@ jobs:
             --extra-vars "domain=${{ env.DOMAIN }}"
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
-          ANSIBLE_ROLES_PATH: ./ansible/roles:./infrastructure-mikrus/ansible/roles
+          ANSIBLE_ROLES_PATH: ./ansible/roles
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TESTED_SHA: ${{ github.event.workflow_run.head_sha }}
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          gh release create "$VERSION" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TESTED_SHA" \
+            --title "Release $VERSION" \
+            --notes "Automated release after successful QA and production deployment."
