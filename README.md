@@ -15,8 +15,11 @@ ale z bieżącą wersją `ext-swoole`.
 2. **Sprawdź dane administratora** (RODO) w [config/organizer.php](config/organizer.php)
    (imię i nazwisko, miejscowość, e-mail kontaktowy). W produkcji są ustawiane przez
    `ORGANIZER_NAME`, `ORGANIZER_ADDRESS`, `ORGANIZER_EMAIL`.
-3. Skonfiguruj konto `radzymin.mleczki@gmail.com` (hasło aplikacji Google, nie hasło do konta)
-   i ustaw `MAILER_DSN`.
+3. Skonfiguruj konto `radzymin.mleczki@gmail.com`: hasło aplikacji Google (nie hasło do konta; wymaga 2FA)
+   i `MAILER_DSN`. Maile wychodzą jako `kontakt@radzymin.mleczki.pl`, więc dodaj ten adres w Gmailu jako
+   „Wyślij jako” (Ustawienia → Konta → Dodaj inny adres e-mail; wysyłanie przez serwery Gmaila). Kod
+   weryfikacyjny dojdzie przez routing Cloudflare na `do@mleczki.pl`. Uwaga: mail jest wtedy podpisany
+   przez `gmail.com`, a nie domenę nadawcy, więc obserwuj dostarczalność (nagłówek `Authentication-Results`).
 4. Wygeneruj `APP_SECRET` i hash hasła administratora (`bin/hash-password`).
 
 ## Wygląd, logo i kontakt
@@ -223,7 +226,7 @@ zawierającym nazwę pliku, więc nie trafi na produkcję. Przykład:
 - **Szablony**: proste pliki PHP (`templates/`), bez silnika szablonów — wyjście zawsze
   przez `e()` (`htmlspecialchars`).
 - **Poczta**: `symfony/mailer`, transport SMTP wskazany przez `MAILER_DSN`
-  (w produkcji: Gmail + hasło aplikacji).
+  (w produkcji: Gmail + hasło aplikacji, nadawca to alias „Wyślij jako”).
 
 ### Przepływ podpisu petycji
 
@@ -360,7 +363,7 @@ danymi. Hash hasła w `.env` jest w pojedynczych cudzysłowach, bo inaczej `dock
 zinterpoluje znaki `$` i go zepsuje — zachowaj je, jeśli będziesz go zmieniać.
 
 - Aplikacja: http://localhost:8080
-- Mailpit (podgląd wysłanych e-maili zamiast prawdziwego Gmaila): http://localhost:8026
+- Mailpit (podgląd wysłanych e-maili zamiast prawdziwej poczty): http://localhost:8026
 
 Bez Dockera (wymaga lokalnie zainstalowanego `ext-swoole`):
 

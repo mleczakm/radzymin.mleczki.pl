@@ -66,7 +66,7 @@ final class WorkerServices
 
         $this->mailer = new ConfirmationMailer(
             MailerFactory::create(),
-            env('MAIL_FROM', 'radzymin.mleczki@gmail.com'),
+            env('MAIL_FROM', 'kontakt@radzymin.mleczki.pl'),
             $this->baseUrl,
         );
 
