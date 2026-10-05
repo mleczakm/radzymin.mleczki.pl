@@ -57,14 +57,12 @@ jobs:
           MIKRUS_SSH_HOST: ${{ secrets.MIKRUS_SSH_HOST }}
           MIKRUS_SSH_PORT: ${{ secrets.MIKRUS_SSH_PORT }}
           MIKRUS_IPV6: ${{ secrets.MIKRUS_IPV6 }}
-          CYTRUS_IPV4: ${{ secrets.CYTRUS_IPV4 }}
           CYTRUS_API_TOKEN: ${{ secrets.CYTRUS_API_TOKEN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           DOTENV: ${{ secrets.DOTENV }}
         run: |
           for name in SSH_PRIVATE_KEY MIKRUS_SSH_HOST MIKRUS_SSH_PORT MIKRUS_IPV6 \
-            CYTRUS_IPV4 CYTRUS_API_TOKEN CLOUDFLARE_API_TOKEN CLOUDFLARE_ZONE_ID DOTENV; do
+            CYTRUS_API_TOKEN CLOUDFLARE_API_TOKEN DOTENV; do
             if [[ -z "${!name}" ]]; then
               echo "Missing production secret: $name" >&2
               exit 1
@@ -140,9 +138,8 @@ jobs:
       - name: Deploy to Mikrus
         run: |
           ansible-playbook -i ansible/inventory.ini ansible/playbooks/deploy.yml \
-            --extra-vars "app_version=${{ steps.version.outputs.value }} cytrus_host=${{ secrets.CYTRUS_IPV4 }}" \
+            --extra-vars "app_version=${{ steps.version.outputs.value }}" \
             --extra-vars "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            --extra-vars "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}" \
             --extra-vars "cytrus_api_token=${{ secrets.CYTRUS_API_TOKEN }}" \
             --extra-vars "ansible_host=${{ secrets.MIKRUS_SSH_HOST }} mikrus_ipv6=${{ secrets.MIKRUS_IPV6 }}" \
             --extra-vars "ansible_port=${{ secrets.MIKRUS_SSH_PORT }}" \

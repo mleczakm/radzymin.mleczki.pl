@@ -411,8 +411,8 @@ Cloudflare DNS i Cytrusa, tak jak [cargo.mleczki.pl](https://github.com/mleczakm
 |---|---|
 | `SSH_PRIVATE_KEY` | klucz SSH do serwera Mikrus |
 | `MIKRUS_SSH_HOST`, `MIKRUS_SSH_PORT`, `MIKRUS_IPV6` | dane dostępowe do serwera |
-| `CYTRUS_IPV4`, `CYTRUS_API_TOKEN` | Mikrus Cytrus (proxy domenowe) |
-| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID` | zarządzanie rekordem DNS i Email Routing dla subdomeny; token musi mieć także uprawnienia Email Routing do odczytu i zapisu |
+| `CYTRUS_API_TOKEN` | Mikrus Cytrus (proxy domenowe) |
+| `CLOUDFLARE_API_TOKEN` | zarządzanie rekordem DNS i Email Routing dla subdomeny; token musi mieć także uprawnienia Email Routing do odczytu i zapisu |
 | `DOTENV` | zawartość pliku ze **sekretami produkcyjnymi** (patrz niżej; to nie jest commitowany `.env` z wartościami deweloperskimi) |
 
 Zawartość sekretu `DOTENV` (jeden `KLUCZ=wartość` na linię):
@@ -431,5 +431,6 @@ CONTACT_FORM_ENDPOINT=https://formspree.io/f/...
 
 Domena, port kontenera i zmienne niesekretne (np. `DB_PATH`) są ustawione w
 [ansible/playbooks/config.production.yml](ansible/playbooks/config.production.yml) — port `8084` domyślnie
-(wolny na Mikrusie przy sprawdzeniu konfiguracji); zweryfikuj, że jest
+(wolny na Mikrusie przy sprawdzeniu konfiguracji). W tym pliku są też identyfikator strefy
+Cloudflare i IPv4 Cytrusa; zweryfikuj, że port jest
 wolny na docelowym serwerze przed pierwszym wdrożeniem.

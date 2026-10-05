@@ -1,4 +1,6 @@
 ---
+cloudflare_zone_id: a80829b534d06a3ab95f513501ab997d
+cytrus_host: 135.181.95.85
 apps:
   - name: radzymin-petycje
     domain: "{{ domain | default('radzymin.mleczki.pl') }}"
