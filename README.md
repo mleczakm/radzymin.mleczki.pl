@@ -40,8 +40,8 @@ ale z bieżącą wersją `ext-swoole`.
   i opcjonalny telefon z `config/organizer.php` (`ORGANIZER_EMAIL`, `ORGANIZER_PHONE`). Zaproszenie
   do kontaktu jest też pod formularzem podpisu, na stronie po wysłaniu i po potwierdzeniu.
 - **Formularz kontaktowy** (Formspree): w sekcji kontaktowej, gdy ustawiono `CONTACT_FORM_ENDPOINT`
-  (adres `https://formspree.io/f/<id>`, inne są ignorowane; na produkcji ustawiony w
-  [ansible/playbooks/config.yml](ansible/playbooks/config.yml), lokalnie celowo nie, żeby próby nie
+  (adres `https://formspree.io/f/<id>`, inne są ignorowane; na produkcji ustawiany w sekrecie
+  GitHub Actions `DOTENV`, lokalnie celowo nie, żeby próby nie
   wysyłały prawdziwych wiadomości). Działa też bez JavaScriptu (zwykły POST do Formspree), a
   [public/contact-form.js](public/contact-form.js) wysyła wiadomość w tle i zostawia odwiedzającego
   na stronie — bez skryptów zewnętrznych. Pole `_gotcha` to honeypot Formspree; dane trafiają do
@@ -413,9 +413,11 @@ ADMIN_PASSWORD_HASH=...   # bin/hash-password "..."
 ORGANIZER_NAME=...
 ORGANIZER_ADDRESS=...
 ORGANIZER_EMAIL=radzymin.mleczki@gmail.com
+# opcjonalnie:
+CONTACT_FORM_ENDPOINT=https://formspree.io/f/...
 ```
 
 Domena, port kontenera i zmienne niesekretne (np. `DB_PATH`) są ustawione w
-[ansible/playbooks/config.yml](ansible/playbooks/config.yml) — port `8081` domyślnie
-(inny niż `8080` używany przez cargo.mleczki.pl na tym samym serwerze); zweryfikuj, że jest
+[ansible/playbooks/config.production.yml](ansible/playbooks/config.production.yml) — port `8084` domyślnie
+(wolny na Mikrusie przy sprawdzeniu konfiguracji); zweryfikuj, że jest
 wolny na docelowym serwerze przed pierwszym wdrożeniem.
