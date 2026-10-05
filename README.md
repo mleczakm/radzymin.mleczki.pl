@@ -412,7 +412,7 @@ Cloudflare DNS i Cytrusa, tak jak [cargo.mleczki.pl](https://github.com/mleczakm
 | `SSH_PRIVATE_KEY` | klucz SSH do serwera Mikrus |
 | `MIKRUS_SSH_HOST`, `MIKRUS_SSH_PORT`, `MIKRUS_IPV6` | dane dostępowe do serwera |
 | `CYTRUS_API_TOKEN` | Mikrus Cytrus (proxy domenowe) |
-| `CLOUDFLARE_API_TOKEN` | zarządzanie rekordem DNS i Email Routing dla subdomeny; token musi mieć także uprawnienia Email Routing do odczytu i zapisu |
+| `CLOUDFLARE_API_TOKEN` | token dla strefy `mleczki.pl` z uprawnieniami `DNS: Edit`, `Zone Settings: Edit` i `Email Routing Rules: Edit` |
 | `DOTENV` | zawartość pliku ze **sekretami produkcyjnymi** (patrz niżej; to nie jest commitowany `.env` z wartościami deweloperskimi) |
 
 Zawartość sekretu `DOTENV` (jeden `KLUCZ=wartość` na linię):
