@@ -28,6 +28,8 @@
 
     form.querySelectorAll('[aria-invalid]').forEach((field) => field.removeAttribute('aria-invalid'));
     submit.disabled = true;
+    submit.classList.add('is-pending');
+    form.setAttribute('aria-busy', 'true');
     setStatus('pending', 'Wysyłanie…');
 
     try {
@@ -56,6 +58,8 @@
       setStatus('error', failureMessage('Brak połączenia z serwerem.'));
     } finally {
       submit.disabled = false;
+      submit.classList.remove('is-pending');
+      form.removeAttribute('aria-busy');
       if (window.turnstile) {
         if (form.querySelector('.cf-turnstile')) window.turnstile.reset();
       }

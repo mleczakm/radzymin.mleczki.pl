@@ -59,6 +59,10 @@ ale z bieżącą wersją `ext-swoole`.
   spójny panel z linkami WhatsApp / Facebook / e-mail, lokalnie generowanym kodem QR i listą podpisów
   do druku. Linki działają bez JavaScriptu. Skrypt `public/interactions.js` dodaje kopiowanie linku
   z potwierdzeniem (lub polem do ręcznego kopiowania, gdy schowek jest niedostępny).
+- **Animacje i reakcje na akcje**: karty i paski postępu pojawiają się przy przewijaniu, przyciski
+  reagują na najechanie i kliknięcie, a formularze pokazują stan wysyłania. Modal kontaktu ma animację
+  otwierania i zamykania. Ustawienie systemowe `prefers-reduced-motion` wyłącza ruch; treść jest
+  dostępna również bez JavaScriptu. Bez dodatkowych bibliotek animacji i skryptów zewnętrznych.
 - **Stopka**: zawiera informację o wykonawcy zgodną z pozostałymi serwisami Michała Mleczki.
 - **O mnie**: zdjęcie i opis pochodzą z repozytorium; zdjęcie jest publikowane w mniejszej wersji bez metadanych EXIF.
 

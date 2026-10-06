@@ -32,6 +32,7 @@
 
   --radius: 14px;
   --shadow: 0 1px 2px rgba(0, 30, 60, 0.06), 0 6px 20px rgba(0, 30, 60, 0.07);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -92,6 +93,7 @@ input:disabled { cursor: not-allowed; }
 h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 12px; }
 h2 { font-size: 1.5rem; line-height: 1.25; margin: 40px 0 12px; }
 h3 { font-size: 1.15rem; line-height: 1.3; margin: 0 0 8px; }
+h1, h2, h3 { overflow-wrap: anywhere; }
 
 .lead { color: var(--color-muted); font-size: 1.1rem; }
 
@@ -667,3 +669,45 @@ code { background: var(--color-border); padding: 2px 5px; border-radius: 4px; }
 .anon-box { position: absolute; background: rgba(0, 0, 0, 0.55); outline: 2px solid #c00; cursor: pointer; }
 .anon-box-manual { outline-color: #06c; }
 .anon-box-draft { background: rgba(0, 102, 204, 0.3); outline: 2px dashed #06c; pointer-events: none; }
+
+/* Motion follows the action; all content is visible before JavaScript runs. */
+.button, .share-link, .share-qr, .site-nav-link, .site-nav-cta, .dialog-close {
+  transition: background-color .2s, border-color .2s, color .2s, box-shadow .25s, transform .25s var(--ease-out);
+}
+.petition-card, .topic-card, .step { transition: border-color .25s, box-shadow .25s, transform .3s var(--ease-out); }
+.field input, .field textarea { transition: border-color .2s, box-shadow .2s, background-color .2s; }
+.field:focus-within input:not([type="checkbox"]), .field:focus-within textarea { box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 12%, transparent); }
+.field-checkbox input { accent-color: var(--blue); width: 18px; height: 18px; flex-shrink: 0; }
+.button:active, .share-link:active, .share-qr:active, .site-nav-cta:active { transform: translateY(1px) scale(.98); }
+.button:disabled { opacity: .7; }
+.button.is-pending { pointer-events: none; }
+.button.is-pending::before { content: ''; width: 16px; height: 16px; flex: 0 0 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: busy-spin .7s linear infinite; }
+.progress-bar-fill { transform-origin: left; }
+.hero { position: relative; isolation: isolate; overflow: hidden; }
+.hero::after { content: ''; position: absolute; z-index: -1; right: -80px; top: -140px; width: clamp(320px, 45vw, 560px); aspect-ratio: 1; border: 1px solid rgb(255 255 255 / .16); border-radius: 50%; box-shadow: 0 0 0 54px rgb(255 255 255 / .04), 0 0 0 108px rgb(255 255 255 / .03); pointer-events: none; }
+.steps { counter-reset: help-step; }
+.step::before { counter-increment: help-step; content: '0' counter(help-step); display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; margin-bottom: 18px; background: var(--color-tint); color: var(--color-link); border-radius: 12px; font-size: .85rem; font-weight: 800; }
+.contact-dialog[open] { animation: dialog-enter .25s var(--ease-out); }
+.contact-dialog[open]::backdrop { animation: backdrop-enter .2s ease-out; }
+.mobile-nav[open] .mobile-nav-panel { animation: dialog-enter .2s var(--ease-out); }
+.form-status-success, .form-status-error, .alert { animation: feedback-enter .3s var(--ease-out); }
+.confirmed-icon polyline { stroke-dasharray: 30; stroke-dashoffset: 0; animation: check-draw .6s var(--ease-out); }
+.signature-form:target, #podpisz:target { animation: target-highlight 1.2s ease-out; }
+@media (hover: hover) and (pointer: fine) {
+  .button:not(:disabled):hover, .site-nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgb(0 40 70 / .15); }
+  .share-link:hover, .share-qr:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .share-qr:hover > .ui-icon { transform: translateX(3px); }
+  .share-qr > .ui-icon { transition: transform .25s var(--ease-out); }
+  .petition-card:hover, .topic-card:hover, .step:hover { transform: translateY(-4px); border-color: var(--color-link); box-shadow: 0 12px 30px rgb(0 40 70 / .1); }
+  .dialog-close:hover { transform: rotate(90deg); }
+}
+@keyframes busy-spin { to { transform: rotate(360deg); } }
+@keyframes dialog-enter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes backdrop-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes feedback-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes check-draw { from { stroke-dashoffset: 30; } to { stroke-dashoffset: 0; } }
+@keyframes target-highlight { from { background-color: var(--color-tint); } to { background-color: transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .button:hover, .button:active, .site-nav-cta:hover, .site-nav-cta:active, .share-link:hover, .share-link:active, .share-qr:hover, .share-qr:active, .share-qr:hover > .ui-icon, .petition-card:hover, .topic-card:hover, .step:hover, .dialog-close:hover { transform: none; }
+}
