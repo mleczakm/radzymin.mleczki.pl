@@ -26,13 +26,13 @@ ale z bieżącą wersją `ext-swoole`.
 
 - **Logo**: nagłówek używa oficjalnego herbu Gminy Radzymin z
   [public/img/herb-gmina-radzymin.svg](public/img/herb-gmina-radzymin.svg); favicon i ikona iPhone’a
-  pochodzą z tego samego herbu. W stopce jest jasna informacja, że logo należy do Gminy,
+  pochodzą z tego samego herbu. W nagłówku wyświetlamy sam herb, bez podpisu „Gmina Radzymin”.
+  W stopce jest jasna informacja, że logo należy do Gminy,
   a strona pozostaje niezależną inicjatywą mieszkańca.
 - **Kolory** pochodzą z logo: niebieski `#007bc2` (marka, biały tekst na nim ma kontrast 4,55:1)
   i żółty `#fcdf00` (wyłącznie przyciski wezwania do działania i akcenty, zawsze z ciemnym
   tekstem). Wszystkie kolory to zmienne CSS na początku [public/style.css](public/style.css),
-  z osobnym wariantem dla trybu ciemnego. Nagłówek jest zawsze jasny, bo logo ma czarny napis
-  na przezroczystym tle.
+  z osobnym wariantem dla trybu ciemnego. Nagłówek pozostaje jasny w obu wariantach.
 - **To nie jest strona urzędowa** — niezależny projekt społeczny mieszkańca Radzymina; stopka,
   nagłówek i formularz podpisu komunikują to jasno. Herb i logo należą do Gminy Radzymin.
 - **Kontakt**: sekcja „O mnie” na stronie głównej bierze tekst z

@@ -120,12 +120,12 @@ h1, h2, h3 { overflow-wrap: anywhere; }
 }
 
 /* ---- Header ------------------------------------------------------------------------------- */
-/* Always light, even in dark mode: the logo has black lettering and a transparent background. */
+/* A light header keeps the coat of arms consistent across colour schemes. */
 .site-header { background: #fff; border-bottom: 4px solid var(--blue); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 10px; padding-bottom: 10px; }
 
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #14202b; }
-.brand-logo { display: block; width: 46px; height: 66px; flex: 0 0 46px; object-fit: contain; }
+.brand-logo { display: block; width: 46px; height: 58px; flex: 0 0 46px; object-fit: contain; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-text strong { font-size: 1.15rem; }
 .brand-text small { color: #4a5b69; font-size: 0.8rem; }
@@ -153,7 +153,7 @@ h1, h2, h3 { overflow-wrap: anywhere; }
   .brand { gap: 10px; }
   .brand-text strong { font-size: 1rem; }
   .brand-text small { font-size: 0.72rem; }
-  .brand-logo { width: auto; height: 54px; flex-basis: auto; }
+  .brand-logo { width: 40px; height: 50px; flex-basis: 40px; }
   .mobile-nav { display: block; position: relative; color: #14202b; }
   .mobile-nav summary { list-style: none; padding: 9px 13px; border: 1px solid var(--color-border); border-radius: 999px; font-weight: 700; }
   .mobile-nav summary::-webkit-details-marker { display: none; }

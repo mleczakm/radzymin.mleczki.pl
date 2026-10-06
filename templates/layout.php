@@ -46,7 +46,7 @@ $canonicalPath ??= null;
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="/" aria-label="Radzymińskie Petycje — strona główna">
-      <img class="brand-logo" src="/img/herb-gmina-radzymin.svg" alt="Herb Gminy Radzymin" width="46" height="66">
+      <img class="brand-logo" src="<?= e(asset_url('img/herb-gmina-radzymin.svg')) ?>" alt="Herb Gminy Radzymin" width="46" height="58">
       <span class="brand-text">
         <strong>Radzymińskie Petycje</strong>
         <small>niezależny projekt mieszkańca</small>
