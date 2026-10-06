@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Radzymińskie Petycje</title>
+  <desc id="description">Niezależny projekt społeczny mieszkańca Radzymina</desc>
+  <rect width="1200" height="630" fill="#f4f8fb"/>
+  <path d="M0 0h1200v25H0z" fill="#007bc2"/>
+  <text x="78" y="128" fill="#14202b" font-family="Arial, sans-serif" font-size="34" font-weight="700">Radzymińskie Petycje</text>
+  <text x="78" y="164" fill="#4a5b69" font-family="Arial, sans-serif" font-size="21">Niezależny projekt społeczny mieszkańca Radzymina</text>
+  <rect x="78" y="245" width="10" height="244" rx="5" fill="#fcdf00"/>
+  <text x="123" y="318" fill="#14202b" font-family="Arial, sans-serif" font-size="55" font-weight="700">Sprawy mieszkańców.</text>
+  <text x="123" y="393" fill="#14202b" font-family="Arial, sans-serif" font-size="55" font-weight="700">Konkretne działania.</text>
+  <text x="123" y="475" fill="#005a91" font-family="Arial, sans-serif" font-size="29">Poznaj inicjatywę i dołącz do rozmowy.</text>
+  <text x="78" y="570" fill="#4a5b69" font-family="Arial, sans-serif" font-size="21">radzymin.mleczki.pl</text>
+</svg>

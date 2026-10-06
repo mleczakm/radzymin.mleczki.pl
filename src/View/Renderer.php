@@ -27,6 +27,7 @@ final class Renderer
      *
      * @param array<string, mixed> $data
      * @param bool $fullWidth Skip the centered column so the page can use full-bleed sections (home hero).
+     * @param string|null $canonicalPath Public path used as the canonical URL for this page.
      */
     public function renderPage(
         string $template,
@@ -34,6 +35,7 @@ final class Renderer
         string $title = 'Radzymińskie Petycje',
         ?string $description = null,
         bool $fullWidth = false,
+        ?string $canonicalPath = null,
     ): string {
         $content = $this->render($template, $data);
 
@@ -42,6 +44,7 @@ final class Renderer
             'title' => $title,
             'description' => $description,
             'fullWidth' => $fullWidth,
+            'canonicalPath' => $canonicalPath,
         ]);
     }
 

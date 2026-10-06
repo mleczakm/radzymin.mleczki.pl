@@ -17,6 +17,6 @@ final class PrivacyAction
 
     public function __invoke(Request $request, Response $response): void
     {
-        Responder::html($response, $this->view->renderPage('privacy', [], 'Polityka prywatności'));
+        Responder::html($response, $this->view->renderPage('privacy', [], 'Polityka prywatności', canonicalPath: '/polityka-prywatnosci'));
     }
 }
