@@ -12,7 +12,7 @@ foreach ($topic->steps as $step) {
   if ($nextStep === null) { $nextStep = $step; }
 }
 ?>
-<p><a href="/">&larr; Strona główna</a></p>
+<p><a href="/#sprawy">&larr; Wszystkie sprawy mieszkańców</a></p>
 
 <div class="topic-card-head">
   <h1><?= e($topic->title) ?></h1>
@@ -28,15 +28,21 @@ foreach ($topic->steps as $step) {
 <?php if ($topic->updatedAt !== null || $lastCompletedStep !== null || $nextStep !== null): ?>
   <div class="topic-current">
     <?php if ($topic->updatedAt !== null): ?><p>Ostatnia aktualizacja: <strong><?= e(format_date($topic->updatedAt)) ?></strong></p><?php endif; ?>
-    <?php if ($lastCompletedStep !== null): ?><p><strong>Ostatni rezultat:</strong> <?= e($lastCompletedStep->title) ?></p><?php endif; ?>
+    <?php if ($lastCompletedStep !== null): ?><p><strong>Ostatnie zdarzenie:</strong> <?= e($lastCompletedStep->title) ?></p><?php endif; ?>
     <?php if ($nextStep !== null): ?><p><strong>Następny krok:</strong> <?= e($nextStep->title) ?></p><?php endif; ?>
   </div>
 <?php endif; ?>
 
-<div class="topic-body"><?= $topic->bodyHtml ?></div>
+<?php if ($topic->steps !== []): ?>
+  <nav class="page-jumps" aria-label="Na tej stronie">
+    <a href="#ustalenia">Treść i dokumenty</a>
+    <a href="#przebieg">Przebieg sprawy</a>
+  </nav>
+<?php endif; ?>
+<div class="topic-body" id="ustalenia"><?= $topic->bodyHtml ?></div>
 
 <?php if ($topic->steps !== []): ?>
-  <h2>Przebieg sprawy</h2>
+  <h2 id="przebieg">Przebieg sprawy</h2>
   <ol class="timeline">
     <?php foreach ($topic->steps as $index => $step): ?>
       <?php $assessment = $assessments[$index] ?? null; ?>

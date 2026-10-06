@@ -6,6 +6,7 @@
  * @var array<string, int|null> $percents
  * @var \App\Domain\Petition|null $featured
  * @var array<string, \App\Domain\Topic> $topics
+ * @var \Closure(string, array<string, mixed>=): string $partial
  */
 ?>
 <?php
@@ -15,16 +16,20 @@ $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
 <section class="hero">
   <div class="wrap hero-inner">
     <p class="hero-eyebrow">Niezależny projekt społeczny Michała Mleczki</p>
-    <h1><?= e($featured?->shortTitle ?? 'Sprawy mieszkańców Radzymina') ?></h1>
+    <h1><?= e($featured?->shortTitle ?? $featured?->title ?? 'Sprawy mieszkańców Radzymina') ?></h1>
     <p class="hero-lead">
-      <?= e($featured?->homeSummary ?? 'Prowadzę lokalne sprawy mieszkańców i pokazuję ich przebieg. Masz pomysł? Napisz do mnie.') ?>
+      <?= e($featured?->homeSummary ?? $featured?->lead ?? 'Prowadzę lokalne sprawy mieszkańców i pokazuję ich przebieg. Masz pomysł? Napisz do mnie.') ?>
     </p>
 
     <div class="hero-actions">
       <?php if ($featured !== null): ?>
         <a class="button button-accent button-lg" href="<?= e($primaryHref) ?>">Poznaj pomysł i podpisz poparcie</a>
       <?php endif; ?>
-      <a class="button button-outline-light button-lg" href="#kontakt" data-contact-open>Napisz do mnie</a>
+      <?php if ($topics !== []): ?>
+        <a class="button button-outline-light button-lg" href="#sprawy">Zobacz sprawy mieszkańców</a>
+      <?php else: ?>
+        <a class="button button-outline-light button-lg" href="#kontakt" data-contact-open>Napisz do mnie</a>
+      <?php endif; ?>
     </div>
 
   </div>
@@ -72,50 +77,26 @@ $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
   </div>
 </section>
 
-<section class="section section-tint" id="zaangazuj-sie">
-  <div class="wrap">
-    <h2>Jak możesz pomóc</h2>
-    <p class="section-lead">Wybierz sposób działania, który Ci odpowiada.</p>
-
-    <ol class="steps">
-      <li class="step">
-        <h3>Podpisz</h3>
-        <p>To zajmuje około minuty. Wybierz petycję, wypełnij formularz i potwierdź podpis w e-mailu.</p>
-      </li>
-      <li class="step">
-        <h3>Zbierz podpisy</h3>
-        <p>
-          Wydrukuj listę i zbierz podpisy wśród sąsiadów i znajomych.
-          <?php if ($featured !== null): ?>
-            <a href="/petycja/<?= e($featured->slug) ?>/lista">Otwórz listę do druku</a>.
-          <?php endif; ?>
-        </p>
-      </li>
-      <li class="step">
-        <h3>Powiedz dalej</h3>
-        <p>Prześlij link znajomym, sąsiadom i lokalnym grupom. Na stronie każdej petycji jest gotowy przycisk udostępniania.</p>
-      </li>
-      <li class="step">
-        <h3>Napisz do mnie</h3>
-        <p>Masz pomysł, problem albo chcesz działać razem? <a href="#kontakt" data-contact-open>Odezwij się</a> — chętnie porozmawiam.</p>
-      </li>
-    </ol>
-  </div>
-</section>
-
 <?php if ($topics !== []): ?>
   <section class="section topics" id="sprawy">
     <div class="wrap">
       <h2>Sprawy mieszkańców</h2>
       <p class="section-lead">Przeczytaj, co udało się ustalić, na jakim etapie jest każda sprawa i jaki będzie kolejny krok.</p>
 
-      <ul class="topic-list">
+      <div class="topic-filters" role="group" aria-label="Filtruj sprawy" hidden>
+        <button type="button" data-topic-filter="all" aria-pressed="true" aria-controls="topic-list">Wszystkie <span data-topic-count="all"></span></button>
+        <button type="button" data-topic-filter="active" aria-pressed="false" aria-controls="topic-list">Otwarte <span data-topic-count="active"></span></button>
+        <button type="button" data-topic-filter="closed" aria-pressed="false" aria-controls="topic-list">Zamknięte <span data-topic-count="closed"></span></button>
+      </div>
+      <p class="visually-hidden" data-topic-status role="status"></p>
+      <p class="empty" data-topic-empty hidden>Brak spraw w tej kategorii. Wybierz „Wszystkie”, aby wrócić do pełnej listy.</p>
+      <ul class="topic-list" id="topic-list" role="list">
         <?php foreach ($topics as $topic): ?>
           <?php $lastCompletedStep = null; $nextStep = null; ?>
           <?php foreach ($topic->steps as $step): ?>
             <?php if ($step->done): $lastCompletedStep = $step; elseif ($nextStep === null): $nextStep = $step; endif; ?>
           <?php endforeach; ?>
-          <li class="topic-card">
+          <li class="topic-card" data-topic-group="<?= in_array($topic->status, [\App\Domain\TopicStatus::Completed, \App\Domain\TopicStatus::Rejected], true) ? 'closed' : 'active' ?>">
             <div class="topic-card-head">
               <h3><a href="/sprawy/<?= e($topic->slug) ?>"><?= e($topic->title) ?></a></h3>
               <span class="badge badge-<?= e($topic->status->value) ?>"><?= e($topic->status->label()) ?></span>
@@ -128,7 +109,7 @@ $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
             <?php endif; ?>
             <p class="topic-summary"><?= e($topic->summary) ?></p>
             <?php if ($lastCompletedStep !== null): ?>
-              <p class="topic-outcome"><strong>Ostatnie ustalenie:</strong> <?= e($lastCompletedStep->title) ?></p>
+              <p class="topic-outcome"><strong>Ostatnie zdarzenie:</strong> <?= e($lastCompletedStep->title) ?></p>
             <?php endif; ?>
             <?php if ($nextStep !== null): ?>
               <p class="topic-next"><strong>Następny krok:</strong> <?= e($nextStep->title) ?></p>
@@ -144,6 +125,41 @@ $primaryHref = $featured !== null ? '/petycja/' . $featured->slug : '#sprawy';
     </div>
   </section>
 <?php endif; ?>
+
+<section class="section section-tint" id="zaangazuj-sie">
+  <div class="wrap">
+    <h2>Jak możesz pomóc</h2>
+    <p class="section-lead">Wybierz sposób działania, który Ci odpowiada.</p>
+
+    <ul class="steps" role="list">
+      <li class="step">
+        <span class="step-icon"><?= $partial('_icon', ['icon' => 'people']) ?></span>
+        <h3>Podpisz</h3>
+        <p>To zajmuje około minuty. Wybierz petycję, wypełnij formularz i potwierdź podpis w e-mailu.</p>
+      </li>
+      <li class="step">
+        <span class="step-icon"><?= $partial('_icon', ['icon' => 'print']) ?></span>
+        <h3>Zbierz podpisy</h3>
+        <p>
+          Wydrukuj listę i zbierz podpisy wśród sąsiadów i znajomych.
+          <?php if ($featured !== null): ?>
+            <a href="/petycja/<?= e($featured->slug) ?>/lista">Otwórz listę do druku</a>.
+          <?php endif; ?>
+        </p>
+      </li>
+      <li class="step">
+        <span class="step-icon"><?= $partial('_icon', ['icon' => 'copy']) ?></span>
+        <h3>Powiedz dalej</h3>
+        <p>Prześlij link znajomym, sąsiadom i lokalnym grupom. Na stronie każdej petycji jest gotowy przycisk udostępniania.</p>
+      </li>
+      <li class="step">
+        <span class="step-icon"><?= $partial('_icon', ['icon' => 'E-mail']) ?></span>
+        <h3>Napisz do mnie</h3>
+        <p>Masz pomysł, problem albo chcesz działać razem? <a href="#kontakt" data-contact-open>Odezwij się</a> — chętnie porozmawiam.</p>
+      </li>
+    </ul>
+  </div>
+</section>
 
 <section class="section contact" id="o-mnie">
   <div class="wrap">

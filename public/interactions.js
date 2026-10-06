@@ -1,6 +1,44 @@
 (() => {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  const errorSummary = document.querySelector('[data-form-errors]');
+  errorSummary?.focus();
+  errorSummary?.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const field = document.getElementById(link.hash.slice(1));
+      if (field) {
+        event.preventDefault();
+        field.focus();
+      }
+    });
+  });
+
+  // Every card stays readable without JavaScript; filters only enhance the complete list.
+  const filters = document.querySelector('.topic-filters');
+  if (filters) {
+    const cards = [...document.querySelectorAll('[data-topic-group]')];
+    const status = document.querySelector('[data-topic-status]');
+    const empty = document.querySelector('[data-topic-empty]');
+    const buttons = [...filters.querySelectorAll('[data-topic-filter]')];
+    const matches = (card, group) => group === 'all' || card.dataset.topicGroup === group;
+    filters.querySelectorAll('[data-topic-count]').forEach((count) => {
+      count.textContent = `(${cards.filter((card) => matches(card, count.dataset.topicCount)).length})`;
+    });
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        let visible = 0;
+        cards.forEach((card) => {
+          card.hidden = !matches(card, button.dataset.topicFilter);
+          if (!card.hidden) visible++;
+        });
+        buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        if (empty) empty.hidden = visible !== 0;
+        if (status) status.textContent = `Widoczne sprawy: ${visible} z ${cards.length}.`;
+      });
+    });
+    filters.hidden = false;
+  }
+
   // Clipboard is optional. A selectable URL remains available if access is refused.
   document.querySelectorAll('[data-share]').forEach((share) => {
     const button = share.querySelector('[data-copy-url]');
@@ -69,6 +107,16 @@
 
   document.querySelectorAll('.mobile-nav-panel a').forEach((link) => {
     link.addEventListener('click', () => { link.closest('details').open = false; });
+  });
+  const mobileNav = document.querySelector('.mobile-nav');
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileNav?.open) {
+      mobileNav.open = false;
+      mobileNav.querySelector('summary').focus();
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (mobileNav?.open && !mobileNav.contains(event.target)) mobileNav.open = false;
   });
 
   if (!('IntersectionObserver' in window)) return;
