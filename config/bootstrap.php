@@ -5,7 +5,10 @@ declare(strict_types=1);
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 if (extension_loaded('swoole')) {
-    Swoole\Runtime::setHookFlags(SWOOLE_HOOK_ALL);
+    // Everything except SSL: with the SSL hook on, Swoole 6 fails every write on a TLS stream ("Unable to write bytes on
+    // the wire"), so no SMTP server over TLS can be reached. TCP stays hooked, so a stalled server still does not block
+    // other requests. STARTTLS (port 587) cannot work under the hooks either; use implicit TLS (smtps://, port 465).
+    Swoole\Runtime::setHookFlags(SWOOLE_HOOK_ALL & ~SWOOLE_HOOK_SSL);
 }
 
 if (is_file(dirname(__DIR__) . '/.env') && !getenv('APP_ENV')) {

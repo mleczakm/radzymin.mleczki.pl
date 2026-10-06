@@ -420,7 +420,7 @@ Zawartość sekretu `DOTENV` (jeden `KLUCZ=wartość` na linię):
 
 ```
 APP_SECRET=...            # php -r "echo bin2hex(random_bytes(32));"
-MAILER_DSN=smtp://radzymin.mleczki%40gmail.com:HASLO_APLIKACJI@smtp.gmail.com:587
+MAILER_DSN=smtps://radzymin.mleczki%40gmail.com:HASLO_APLIKACJI@smtp.gmail.com:465
 ADMIN_USER=admin
 ADMIN_PASSWORD_HASH=...   # bin/hash-password "..."
 ORGANIZER_NAME=Michał Mleczko
