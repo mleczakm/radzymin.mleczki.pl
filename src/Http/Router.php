@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\View\Renderer;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -11,6 +12,10 @@ final class Router
 {
     /** @var list<array{0: string, 1: string, 2: callable}> */
     private array $routes = [];
+
+    public function __construct(private readonly Renderer $view)
+    {
+    }
 
     public function get(string $pattern, callable $handler): void
     {
@@ -50,7 +55,8 @@ final class Router
             return;
         }
 
-        $response->status(404);
-        $response->end('Nie znaleziono strony.');
+        Responder::html($response, $this->view->renderPage('error', [
+            'message' => 'Nie znaleziono tej strony. Link może być nieaktualny. Wróć na stronę główną, aby znaleźć petycje i sprawy mieszkańców.',
+        ], 'Nie znaleziono strony — Radzymińskie Petycje'), 404);
     }
 }

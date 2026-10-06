@@ -52,7 +52,7 @@ $server->on('WorkerStart', function () use ($services): void {
     $services->boot();
 });
 
-$router = new Router();
+$router = new Router($view);
 $router->get('/', new HomeAction($services, $view));
 $router->get('/zdrowie', new HealthAction());
 $router->get('/polityka-prywatnosci', new PrivacyAction($view));
