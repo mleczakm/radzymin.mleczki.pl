@@ -16,8 +16,11 @@ final class SitemapAction
 
     public function __invoke(Request $request, Response $response): void
     {
-        $baseUrl = $this->services->baseUrl;
-        $paths = ['/', '/o-mnie', '/polityka-prywatnosci'];
+        $baseUrl = rtrim($this->services->baseUrl, '/');
+        $paths = ['/', '/polityka-prywatnosci'];
+        if ($this->services->about !== null) {
+            $paths[] = '/o-mnie';
+        }
 
         foreach ($this->services->petitions->all() as $petition) {
             $paths[] = '/petycja/' . $petition->slug;

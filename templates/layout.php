@@ -23,6 +23,9 @@ $canonicalPath ??= null;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($title) ?></title>
 <meta name="description" content="<?= e($pageDescription) ?>">
+<?php if ($canonicalPath === null): ?>
+<meta name="robots" content="noindex, follow">
+<?php endif; ?>
 <meta name="theme-color" content="#007bc2">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pl_PL">
@@ -32,7 +35,12 @@ $canonicalPath ??= null;
 <?php if ($canonicalPath !== null): ?>
 <link rel="canonical" href="<?= e(rtrim($baseUrl, '/') . ($canonicalPath === '/' ? '/' : $canonicalPath)) ?>">
 <?php endif; ?>
-<meta property="og:image" content="<?= e(rtrim($baseUrl, '/') . '/img/social-card.svg') ?>">
+<meta property="og:image" content="<?= e(rtrim($baseUrl, '/') . '/img/social-card.png') ?>">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Radzymińskie Petycje — sprawy mieszkańców, konkretne działania">
+<meta name="twitter:card" content="summary_large_image">
 <?php if ($canonicalPath !== null): ?>
 <meta property="og:url" content="<?= e(rtrim($baseUrl, '/') . ($canonicalPath === '/' ? '/' : $canonicalPath)) ?>">
 <?php endif; ?>
@@ -55,7 +63,7 @@ $canonicalPath ??= null;
     <nav class="site-nav" aria-label="Główna nawigacja">
       <a class="site-nav-link" href="/#petycje">Petycje</a>
       <a class="site-nav-link" href="/#sprawy">Sprawy</a>
-      <a class="site-nav-link" href="/#o-mnie">O mnie</a>
+      <a class="site-nav-link" href="/o-mnie">O mnie</a>
       <a class="site-nav-cta" href="/#kontakt" data-contact-open>Napisz do mnie</a>
     </nav>
     <details class="mobile-nav">
@@ -63,7 +71,7 @@ $canonicalPath ??= null;
       <nav class="mobile-nav-panel" id="mobile-nav-panel" aria-label="Menu główne">
         <a href="/#petycje">Petycje</a>
         <a href="/#sprawy">Sprawy</a>
-        <a href="/#o-mnie">O mnie</a>
+        <a href="/o-mnie">O mnie</a>
         <a href="/#kontakt" data-contact-open>Napisz do mnie</a>
       </nav>
     </details>

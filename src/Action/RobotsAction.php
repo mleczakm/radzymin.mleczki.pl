@@ -16,6 +16,6 @@ final class RobotsAction
     public function __invoke(Request $request, Response $response): void
     {
         $response->header('Content-Type', 'text/plain; charset=utf-8');
-        $response->end("User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /zdrowie\nDisallow: /petycja/*/lista\nDisallow: /petycja/*/qr\nDisallow: /petycja/*/qr.svg\nDisallow: /potwierdz/\n\nSitemap: " . rtrim($this->baseUrl, '/') . "/sitemap.xml\n");
+        $response->end("User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /zdrowie\nDisallow: /potwierdz/\n\nSitemap: " . rtrim($this->baseUrl, '/') . "/sitemap.xml\n");
     }
 }
