@@ -22,17 +22,15 @@
 <?= $progressHtml ?>
 
 <div class="help-box">
-  <h2>Pomóż zebrać podpisy</h2>
+  <div class="help-heading">
+    <span class="help-icon"><?= $partial('_icon', ['icon' => 'people']) ?></span>
+    <div><p class="help-eyebrow">Razem mamy większy głos</p><h2>Pomóż zebrać podpisy</h2></div>
+  </div>
   <?= $partial('_share', [
       'shareUrl' => $baseUrl . '/petycja/' . $petition->slug,
       'shareText' => 'Podpisz petycję: ' . $petition->title,
       'qrUrl' => $baseUrl . '/petycja/' . $petition->slug . '/qr',
   ]) ?>
-  <p>
-    Zbierasz podpisy wśród sąsiadów?
-    <a href="/petycja/<?= e($petition->slug) ?>/lista">Wydrukuj listę podpisów</a>
-    i przekaż mi wypełnioną — dopiszę podpisy do wyniku.
-  </p>
 </div>
 
 <?= $recentSignaturesHtml ?>

@@ -154,6 +154,7 @@ $canonicalPath ??= null;
 </dialog>
 <script src="<?= e(asset_url('contact-form.js')) ?>" defer></script>
 <script src="<?= e(asset_url('contact-modal.js')) ?>" defer></script>
+<script src="<?= e(asset_url('interactions.js')) ?>" defer></script>
 <?php if ($turnstileSiteKey !== null): ?>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <?php endif; ?>

@@ -56,8 +56,9 @@ ale z bieżącą wersją `ext-swoole`.
   Formspree, Inc. (USA), co opisuje polityka prywatności. Darmowy plan Formspree ma miesięczny limit
   wiadomości.
 - **Udostępnianie**: strona petycji, strona po wysłaniu formularza i strona potwierdzenia mają
-  linki WhatsApp / Facebook / e-mail oraz mały, lokalnie generowany kod QR prowadzący do kartki do druku.
-  To zwykłe linki — bez JavaScriptu i skryptów zewnętrznych.
+  spójny panel z linkami WhatsApp / Facebook / e-mail, lokalnie generowanym kodem QR i listą podpisów
+  do druku. Linki działają bez JavaScriptu. Skrypt `public/interactions.js` dodaje kopiowanie linku
+  z potwierdzeniem (lub polem do ręcznego kopiowania, gdy schowek jest niedostępny).
 - **Stopka**: zawiera informację o wykonawcy zgodną z pozostałymi serwisami Michała Mleczki.
 - **O mnie**: zdjęcie i opis pochodzą z repozytorium; zdjęcie jest publikowane w mniejszej wersji bez metadanych EXIF.
 
