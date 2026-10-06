@@ -5,6 +5,8 @@
  * @var string|null $description
  * @var bool $fullWidth
  * @var array{name: string, address: string, contactEmail: string, phone: string|null, contactFormEndpoint: string|null, turnstileSiteKey: string|null} $organizer
+ * @var string $baseUrl
+ * @var string|null $canonicalPath
  */
 ?>
 <?php
@@ -12,6 +14,7 @@ $pageDescription = $description ?? 'Niezależna inicjatywa mieszkańców Radzymi
 $phone = $organizer['phone'] ?? null;
 $contactFormEndpoint = $organizer['contactFormEndpoint'] ?? null;
 $turnstileSiteKey = $organizer['turnstileSiteKey'] ?? null;
+$canonicalPath ??= null;
 ?>
 <!doctype html>
 <html lang="pl">
@@ -26,6 +29,13 @@ $turnstileSiteKey = $organizer['turnstileSiteKey'] ?? null;
 <meta property="og:site_name" content="Radzymińskie Petycje">
 <meta property="og:title" content="<?= e($title) ?>">
 <meta property="og:description" content="<?= e($pageDescription) ?>">
+<?php if ($canonicalPath !== null): ?>
+<link rel="canonical" href="<?= e(rtrim($baseUrl, '/') . ($canonicalPath === '/' ? '/' : $canonicalPath)) ?>">
+<?php endif; ?>
+<meta property="og:image" content="<?= e(rtrim($baseUrl, '/') . '/img/social-card.svg') ?>">
+<?php if ($canonicalPath !== null): ?>
+<meta property="og:url" content="<?= e(rtrim($baseUrl, '/') . ($canonicalPath === '/' ? '/' : $canonicalPath)) ?>">
+<?php endif; ?>
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="<?= e(asset_url('style.css')) ?>">
@@ -39,7 +49,7 @@ $turnstileSiteKey = $organizer['turnstileSiteKey'] ?? null;
       <img class="brand-logo" src="/img/herb-gmina-radzymin.svg" alt="Herb Gminy Radzymin" width="46" height="66">
       <span class="brand-text">
         <strong>Radzymińskie Petycje</strong>
-        <small>niezależna inicjatywa mieszkańców</small>
+        <small>niezależny projekt mieszkańca</small>
       </span>
     </a>
     <nav class="site-nav" aria-label="Główna nawigacja">
@@ -48,6 +58,15 @@ $turnstileSiteKey = $organizer['turnstileSiteKey'] ?? null;
       <a class="site-nav-link" href="/#o-mnie">O mnie</a>
       <a class="site-nav-cta" href="/#kontakt" data-contact-open>Napisz do mnie</a>
     </nav>
+    <details class="mobile-nav">
+      <summary aria-controls="mobile-nav-panel">Menu</summary>
+      <nav class="mobile-nav-panel" id="mobile-nav-panel" aria-label="Menu główne">
+        <a href="/#petycje">Petycje</a>
+        <a href="/#sprawy">Sprawy</a>
+        <a href="/#o-mnie">O mnie</a>
+        <a href="/#kontakt" data-contact-open>Napisz do mnie</a>
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -62,13 +81,38 @@ $turnstileSiteKey = $organizer['turnstileSiteKey'] ?? null;
       lub zadzwoń: <a href="tel:<?= e(preg_replace('/[^\d+]/', '', $phone)) ?>"><?= e($phone) ?></a><?php endif; ?>
     </p>
     <p class="disclaimer">
-      To niezależna, prywatna inicjatywa. Strona nie jest prowadzona przez Gminę Radzymin ani Urząd Miasta i Gminy
-      i nie występuje w ich imieniu; herb i logo należą do Gminy Radzymin.
+      To niezależna inicjatywa mieszkańca, nieprowadzona przez Gminę Radzymin ani Urząd Miasta i Gminy
+      i niewystępująca w ich imieniu. Herb i logo należą do Gminy Radzymin.
     </p>
     <p><a href="/polityka-prywatnosci">Polityka prywatności</a></p>
-    <p class="site-credit">Stronę wykonał <a href="https://mleczakm.github.io/platnosci-blik/" rel="noopener" target="_blank">Michał Mleczko</a> — strony z płatnościami BLIK bez operatora płatności i bez abonamentu.</p>
+    <p class="site-credit">Stronę wykonał <a href="https://mleczakm.github.io/platnosci-blik/" rel="noopener" target="_blank">Michał Mleczko</a>.</p>
   </div>
 </footer>
+<script type="application/ld+json">
+<?= json_encode([
+    '@context' => 'https://schema.org',
+    '@graph' => [
+        ['@type' => 'WebSite', '@id' => rtrim($baseUrl, '/') . '/#website', 'name' => 'Radzymińskie Petycje', 'url' => rtrim($baseUrl, '/') . '/'],
+        ['@type' => 'Person', '@id' => rtrim($baseUrl, '/') . '/o-mnie#autor', 'name' => 'Michał Mleczko', 'url' => rtrim($baseUrl, '/') . '/o-mnie', 'image' => rtrim($baseUrl, '/') . '/img/michal-mleczko.jpg', 'jobTitle' => 'Organizator inicjatywy społecznej', 'homeLocation' => ['@type' => 'City', 'name' => 'Radzymin']],
+        ...($canonicalPath !== null ? [[
+            '@type' => 'WebPage',
+            '@id' => rtrim($baseUrl, '/') . ($canonicalPath === '/' ? '/#strona' : $canonicalPath . '#strona'),
+            'url' => rtrim($baseUrl, '/') . ($canonicalPath === '/' ? '/' : $canonicalPath),
+            'name' => $title,
+            'description' => $pageDescription,
+            'isPartOf' => ['@id' => rtrim($baseUrl, '/') . '/#website'],
+            'about' => ['@id' => rtrim($baseUrl, '/') . '/o-mnie#autor'],
+        ]] : []),
+        ...(is_string($canonicalPath) && str_starts_with($canonicalPath, '/sprawy/') ? [[
+            '@type' => 'Article',
+            'headline' => $title,
+            'description' => $pageDescription,
+            'author' => ['@id' => rtrim($baseUrl, '/') . '/o-mnie#autor'],
+            'mainEntityOfPage' => rtrim($baseUrl, '/') . $canonicalPath,
+        ]] : []),
+    ],
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
+</script>
 <dialog class="contact-dialog" id="contact-dialog" aria-labelledby="contact-dialog-title">
   <div class="contact-dialog-head">
     <h2 id="contact-dialog-title">Napisz do mnie</h2>

@@ -16,6 +16,10 @@ final class Petition
         public readonly ?int $goal = null,
         /** ISO date (Y-m-d); when set with $goal, shows a "days remaining" countdown. */
         public readonly ?string $deadline = null,
+        /** Short home-page heading for this petition, when supplied in its front matter. */
+        public readonly ?string $shortTitle = null,
+        /** Short home-page explanation of the initiative, when supplied in its front matter. */
+        public readonly ?string $homeSummary = null,
     ) {
     }
 

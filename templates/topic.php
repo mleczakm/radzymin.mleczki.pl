@@ -4,8 +4,13 @@
  */
 ?>
 <?php
-$percent = $topic->progressPercent();
 $assessments = $topic->responseAssessments();
+$lastCompletedStep = null;
+$nextStep = null;
+foreach ($topic->steps as $step) {
+  if ($step->done) { $lastCompletedStep = $step; continue; }
+  if ($nextStep === null) { $nextStep = $step; }
+}
 ?>
 <p><a href="/">&larr; Strona główna</a></p>
 
@@ -20,13 +25,11 @@ $assessments = $topic->responseAssessments();
 
 <p class="lead"><?= e($topic->summary) ?></p>
 
-<?php if ($percent !== null): ?>
-  <div class="topic-progress">
-    <div class="progress-bar" role="progressbar" aria-label="Postęp sprawy"
-         aria-valuenow="<?= (int) $percent ?>" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-bar-fill" style="width: <?= (int) $percent ?>%"></div>
-    </div>
-    <span class="topic-meta">Postęp: <?= (int) $percent ?>%</span>
+<?php if ($topic->updatedAt !== null || $lastCompletedStep !== null || $nextStep !== null): ?>
+  <div class="topic-current">
+    <?php if ($topic->updatedAt !== null): ?><p>Ostatnia aktualizacja: <strong><?= e(format_date($topic->updatedAt)) ?></strong></p><?php endif; ?>
+    <?php if ($lastCompletedStep !== null): ?><p><strong>Ostatni rezultat:</strong> <?= e($lastCompletedStep->title) ?></p><?php endif; ?>
+    <?php if ($nextStep !== null): ?><p><strong>Następny krok:</strong> <?= e($nextStep->title) ?></p><?php endif; ?>
   </div>
 <?php endif; ?>
 
@@ -57,8 +60,4 @@ $assessments = $topic->responseAssessments();
       </li>
     <?php endforeach; ?>
   </ol>
-<?php endif; ?>
-
-<?php if ($topic->updatedAt !== null): ?>
-  <p class="topic-meta">Ostatnia aktualizacja: <?= e(format_date($topic->updatedAt)) ?></p>
 <?php endif; ?>

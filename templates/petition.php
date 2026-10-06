@@ -39,8 +39,8 @@
 
 <h2 id="podpisz">Podpisz petycję</h2>
 <p class="disclaimer disclaimer-inline">
-  Dane podajesz organizatorowi petycji (<a href="/polityka-prywatnosci">polityka prywatności</a>),
-  a nie Gminie Radzymin — to niezależna inicjatywa, nie strona urzędowa.
+  Podpis trafi do organizatora tej niezależnej inicjatywy, nie do Urzędu Gminy. Po potwierdzeniu e-mailem
+  na stronie pokażemy Twoje imię, inicjał nazwiska i miejscowość. Szczegóły: <a href="/polityka-prywatnosci">polityka prywatności</a>.
 </p>
 
 <?php if (isset($errors['_global'])): ?>
@@ -57,6 +57,7 @@
   <div class="field">
     <label for="first_name">Imię</label>
     <input type="text" id="first_name" name="first_name" required minlength="2" maxlength="100"
+           autocomplete="given-name"
            value="<?= e($old['first_name'] ?? '') ?>">
     <?php if (isset($errors['first_name'])): ?><p class="field-error"><?= e($errors['first_name']) ?></p><?php endif; ?>
   </div>
@@ -64,6 +65,7 @@
   <div class="field">
     <label for="last_name">Nazwisko</label>
     <input type="text" id="last_name" name="last_name" required minlength="2" maxlength="100"
+           autocomplete="family-name"
            value="<?= e($old['last_name'] ?? '') ?>">
     <?php if (isset($errors['last_name'])): ?><p class="field-error"><?= e($errors['last_name']) ?></p><?php endif; ?>
   </div>
@@ -71,6 +73,7 @@
   <div class="field">
     <label for="city">Miejscowość</label>
     <input type="text" id="city" name="city" required minlength="2" maxlength="100"
+           autocomplete="address-level2"
            value="<?= e($old['city'] ?? '') ?>">
     <?php if (isset($errors['city'])): ?><p class="field-error"><?= e($errors['city']) ?></p><?php endif; ?>
   </div>
@@ -78,6 +81,7 @@
   <div class="field">
     <label for="email">Adres e-mail</label>
     <input type="email" id="email" name="email" required maxlength="190"
+           autocomplete="email"
            value="<?= e($old['email'] ?? '') ?>">
     <p class="field-hint">Na ten adres wyślemy link potwierdzający podpis.</p>
     <?php if (isset($errors['email'])): ?><p class="field-error"><?= e($errors['email']) ?></p><?php endif; ?>

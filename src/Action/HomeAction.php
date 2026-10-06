@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Action;
 
-use App\Domain\TopicStatus;
 use App\Http\Responder;
 use App\Runtime\WorkerServices;
 use App\View\Renderer;
@@ -30,23 +29,16 @@ final class HomeAction
             $percents[$petition->slug] = $petition->progressPercent($counts[$petition->slug]);
         }
 
-        $activeTopics = array_filter(
-            $topics,
-            static fn ($topic): bool => in_array($topic->status, [TopicStatus::InProgress, TopicStatus::Waiting], true),
-        );
-
         $html = $this->view->renderPage('home', [
             'petitions' => $petitions,
             'counts' => $counts,
             'percents' => $percents,
             'featured' => $petitions === [] ? null : reset($petitions),
-            'totalSignatures' => array_sum($counts),
-            'activeTopicCount' => count($activeTopics),
             'topics' => $topics,
-            'about' => $this->services->about,
         ], 'Radzymińskie Petycje — podpisz i zaangażuj się',
-            'Podpisz petycję w kilka minut, pomóż zebrać podpisy i napisz do mnie. Niezależna inicjatywa mieszkańców Radzymina.',
+            'Petycja mieszkańców Radzymina, udokumentowane sprawy lokalne i konkretne sposoby działania. Poznaj inicjatywę Michała Mleczki.',
             fullWidth: true,
+            canonicalPath: '/',
         );
 
         Responder::html($response, $html);

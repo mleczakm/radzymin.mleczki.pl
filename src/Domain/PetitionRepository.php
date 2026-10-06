@@ -35,6 +35,8 @@ final class PetitionRepository
                     ?? date('Y-m-d', filemtime($file) ?: time()),
                 goal: is_numeric($goal) ? (int) $goal : null,
                 deadline: MarkdownLoader::normalizeDate($frontMatter['deadline'] ?? null),
+                shortTitle: isset($frontMatter['shortTitle']) ? (string) $frontMatter['shortTitle'] : null,
+                homeSummary: isset($frontMatter['homeSummary']) ? (string) $frontMatter['homeSummary'] : null,
             );
 
             $this->petitions[$petition->slug] = $petition;

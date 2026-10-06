@@ -1,6 +1,8 @@
 ---
 slug: osiedle-slowackiego-korczaka
-title: "Osiedle Słowackiego/Korczaka jako jednostka pomocnicza gminy"
+title: "Osiedle Słowackiego/Korczaka — własna reprezentacja mieszkańców"
+shortTitle: "Pomóż stworzyć osiedle Słowackiego/Korczaka"
+homeSummary: "Zbieram poparcie i pomysły mieszkańców. Jeśli inicjatywa zyska wyraźne poparcie, przygotuję formalny wniosek o konsultacje w sprawie utworzenia osiedla."
 lead: >
   Wstępna petycja i konsultacje: sprawdzam, ilu mieszkańców poprze utworzenie osiedla Słowackiego/Korczaka
   jako jednostki pomocniczej Gminy Radzymin. Podpisz poparcie i napisz, jak widzisz to osiedle.

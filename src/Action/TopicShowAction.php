@@ -29,6 +29,12 @@ final class TopicShowAction
             return;
         }
 
-        Responder::html($response, $this->view->renderPage('topic', ['topic' => $topic], $topic->title, $topic->summary));
+        Responder::html($response, $this->view->renderPage(
+            'topic',
+            ['topic' => $topic],
+            $topic->title . ' — Radzymińskie Petycje',
+            $topic->summary,
+            canonicalPath: '/sprawy/' . $topic->slug,
+        ));
     }
 }

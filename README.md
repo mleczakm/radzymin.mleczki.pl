@@ -24,18 +24,17 @@ ale z bieżącą wersją `ext-swoole`.
 
 ## Wygląd, logo i kontakt
 
-- **Logo**: [public/img/herb-gmina-radzymin.svg](public/img/herb-gmina-radzymin.svg) to
-  niezmieniony plik z <https://radzymin.pl/clients/cms_radzymin/image/default/herb-napis-pod.svg>
-  (oficjalne logo Gminy Radzymin; w środku jest rastrowy PNG, nie wektor). Favicon i
-  `apple-touch-icon.png` to wycięta z niego sama tarcza.
+- **Logo**: nagłówek używa oficjalnego herbu Gminy Radzymin z
+  [public/img/herb-gmina-radzymin.svg](public/img/herb-gmina-radzymin.svg); favicon i ikona iPhone’a
+  pochodzą z tego samego herbu. W stopce jest jasna informacja, że logo należy do Gminy,
+  a strona pozostaje niezależną inicjatywą mieszkańca.
 - **Kolory** pochodzą z logo: niebieski `#007bc2` (marka, biały tekst na nim ma kontrast 4,55:1)
   i żółty `#fcdf00` (wyłącznie przyciski wezwania do działania i akcenty, zawsze z ciemnym
   tekstem). Wszystkie kolory to zmienne CSS na początku [public/style.css](public/style.css),
   z osobnym wariantem dla trybu ciemnego. Nagłówek jest zawsze jasny, bo logo ma czarny napis
   na przezroczystym tle.
-- **To nie jest strona urzędowa** — stopka, hero i formularz podpisu mówią to wprost, żeby nikt
-  nie oddał danych osobowych w przekonaniu, że robi to Gminie. Herb i logo należą do Gminy;
-  przed publikacją warto upewnić się, że zgadza się na takie użycie.
+- **To nie jest strona urzędowa** — niezależny projekt społeczny mieszkańca Radzymina; stopka,
+  nagłówek i formularz podpisu komunikują to jasno. Herb i logo należą do Gminy Radzymin.
 - **Kontakt**: sekcja „O mnie” na stronie głównej bierze tekst z
   [content/about.md](content/about.md) (front matter `heading`, treść w Markdown), a adres e-mail
   i opcjonalny telefon z `config/organizer.php` (`ORGANIZER_EMAIL`, `ORGANIZER_PHONE`). Zaproszenie
@@ -87,6 +86,8 @@ Pełna treść petycji w **Markdown** — akapity, listy, pogrubienia itd.
 - `goal` — liczba podpisów jako cel; gdy ustawiona, na stronie petycji i po potwierdzeniu
   e-maila pojawia się pasek postępu (`X z celu Y podpisów`, `Z%`, „Brakuje jeszcze N…”).
 - `deadline` — data (RRRR-MM-DD); razem z `goal` pokazuje też „pozostało N dni”.
+- `shortTitle` i `homeSummary` — opcjonalne krótkie hasło i opis aktualnej inicjatywy na pierwszym
+  ekranie oraz w karcie na stronie głównej.
 
 Plik parsowany jest raz na proces workera (przy starcie), a wynikowy HTML trzymany w
 pamięci przez cały czas życia workera — dodanie kolejnej petycji nie kosztuje nic przy obsłudze
