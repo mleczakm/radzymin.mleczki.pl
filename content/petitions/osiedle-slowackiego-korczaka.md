@@ -8,6 +8,7 @@ lead: >
   jako jednostki pomocniczej Gminy Radzymin. Podpisz poparcie i napisz, jak widzisz to osiedle.
 createdAt: 2026-10-06
 goal: 100
+published: false
 ---
 
 To jest **wstępna** petycja. Nie jest jeszcze formalnym wnioskiem do Rady Miejskiej, tylko pierwszym

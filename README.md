@@ -93,6 +93,8 @@ Pełna treść petycji w **Markdown** — akapity, listy, pogrubienia itd.
 - `deadline` — data (RRRR-MM-DD); razem z `goal` pokazuje też „pozostało N dni”.
 - `shortTitle` i `homeSummary` — opcjonalne krótkie hasło i opis aktualnej inicjatywy na pierwszym
   ekranie oraz w karcie na stronie głównej.
+- `published` — ustaw `false`, aby zachować petycję w repozytorium, ale wyłączyć ją w aplikacji
+  (nie będzie widoczna na stronie głównej ani dostępna pod swoim adresem).
 
 Plik parsowany jest raz na proces workera (przy starcie), a wynikowy HTML trzymany w
 pamięci przez cały czas życia workera — dodanie kolejnej petycji nie kosztuje nic przy obsłudze

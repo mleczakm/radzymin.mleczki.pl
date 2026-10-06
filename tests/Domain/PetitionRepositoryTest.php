@@ -39,6 +39,15 @@ final class PetitionRepositoryTest extends TestCase
         self::assertSame(['test-petition'], array_keys($repository->all()));
     }
 
+    public function testUnpublishedPetitionsAreExcludedFromListAndSlugLookup(): void
+    {
+        $repository = new PetitionRepository(__DIR__ . '/../fixtures/petitions-publication');
+
+        self::assertSame(['published-petition'], array_keys($repository->all()));
+        self::assertNotNull($repository->find('published-petition'));
+        self::assertNull($repository->find('unpublished-petition'));
+    }
+
     public function testMissingRequiredFrontMatterFieldThrows(): void
     {
         $this->expectException(\RuntimeException::class);

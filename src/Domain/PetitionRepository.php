@@ -24,6 +24,13 @@ final class PetitionRepository
         foreach ($loader->files($contentDir) as $file) {
             $document = $loader->load($file, ['slug', 'title', 'lead']);
             $frontMatter = $document->frontMatter;
+
+            // Keep unpublished petitions in the repository while making them unavailable
+            // through every application surface that reads from this repository.
+            if (($frontMatter['published'] ?? true) === false) {
+                continue;
+            }
+
             $goal = $frontMatter['goal'] ?? null;
 
             $petition = new Petition(
